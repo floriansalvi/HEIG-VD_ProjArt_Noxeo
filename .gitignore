@@ -1,0 +1,60 @@
+# ---------------------
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# ---------------------
+# Ignore back-end dependencies
+/backend/vendor/
+/backend/node_modules/
+
+# Env files
+/backend/.env
+/backend/.env.local
+/backend/.env.*.backup
+
+# Laravel storage & cache
+/backend/storage/*.key
+/backend/storage/framework/cache/data/*
+/backend/storage/logs/*
+/backend/storage/debugbar/*
+/backend/bootstrap/cache/*.php
+
+# Laravel public files
+/backend/public/hot
+/backend/public/storage
+/backend/public/mix-manifest.json
+/backend/public/build/
+
+# IDE folders
+/backend/.idea/
+/backend/.vscode/
+
+# ---------------------
+# Ignore front-end dependencies
+/frontend/node_modules/
+/frontend/dist/
+/frontend/build/
+
+# Env files
+/frontend/.env
+/frontend/.env.local
+/frontend/.env.*.backup
+
+# IDE folders
+/frontend/.idea/
+/frontend/.vscode/
+
+# ---------------------
+# Ignore global files
+*.log
+*.sql
+*.sqlite
+*.sqlite3
+
+# ---------------------
+# Ignore IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
