@@ -1,0 +1,39 @@
+body {
+  font-family: var(--font-family-main);
+  color: var(--color-black);
+  font-weight: var(--font-regular);
+  line-height: 1.5;
+}
+
+h1,
+.title-xl {
+  font-size: 2rem;
+  font-weight: var(--font-bold);
+  color: var(--color-blue);
+}
+
+h2,
+.title-lg {
+  font-size: 1.5rem;
+  font-weight: var(--font-demibold);
+  color: var(--color-blue);
+}
+
+h3,
+.title-md {
+  font-size: 1.2rem;
+  font-weight: var(--font-medium);
+  color: var(--color-blue);
+}
+
+p,
+.text-body {
+  font-size: 1rem;
+  font-weight: var(--font-regular);
+  color: var(--color-black);
+}
+
+.small-text {
+  font-size: 0.875rem;
+  color: var(--color-gray);
+}
