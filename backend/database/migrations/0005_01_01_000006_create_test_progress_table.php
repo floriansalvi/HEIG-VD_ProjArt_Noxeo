@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('step_id')->constrained('steps')->onDelete('cascade');
             $table->timestamp('attempt_date');
             $table->integer('score');
-            $table->inter('time_bonus');
+            $table->integer('time_bonus');
             $table->boolean('is_successful')->default(false);
             $table->timestamps();
 

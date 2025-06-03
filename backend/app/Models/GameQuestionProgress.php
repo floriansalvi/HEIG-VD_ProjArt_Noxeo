@@ -20,8 +20,8 @@ class GameQuestionProgress extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function game() {
-        return $this->belongsTo(Game::class);
+    public function gameProgress() {
+        return $this->belongsTo(GameProgress::class);
     }
 
     public function gameQuestion() {

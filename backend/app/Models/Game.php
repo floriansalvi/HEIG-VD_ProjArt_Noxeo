@@ -25,8 +25,4 @@ class Game extends Model
     public function gameProgresses() {
         return $this->hasMany(GameProgress::class);
     }
-
-    public function gameQuestionProgresses() {
-        return $this->hasMany(GameQuestionProgress::class);
-    }
 }
