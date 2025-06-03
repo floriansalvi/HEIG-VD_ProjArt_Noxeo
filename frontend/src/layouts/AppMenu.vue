@@ -2,14 +2,12 @@
   <transition name="slide-down">
     <div class="app-menu" v-if="show" v-click-outside="handleOutsideClick">
       <div class="menu-content">
-        <h2>Learning path</h2>
-        <hr />
         <ul>
+          <li><router-link to="/learning-path">Learning Path</router-link></li>
           <li><router-link to="/learning">Learning</router-link></li>
           <li><router-link to="/ranking">Ranking</router-link></li>
           <li><router-link to="/profile">Profile</router-link></li>
           <li><router-link to="/settings">Settings</router-link></li>
-          <li><router-link to="/help">Help</router-link></li>
         </ul>
         <div class="logout">
           <router-link to="/">Log out</router-link>

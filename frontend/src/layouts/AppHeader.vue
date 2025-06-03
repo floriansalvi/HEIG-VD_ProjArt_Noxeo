@@ -70,7 +70,7 @@
 
 .menu-btn {
   position: absolute;
-  right: 0;
+  right: 0.4rem;
   background: none;
   border: none;
   font-size: 1.5rem;

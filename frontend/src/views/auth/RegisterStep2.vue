@@ -24,18 +24,14 @@
         class="input"
       />
 
-      <label class="checkbox-container">
-        <input type="checkbox" />
-        <span>
-          I agree to the
-          <a href="#" target="_blank">terms of service</a>
-          and
-          <a href="#" target="_blank">privacy policy</a>
-        </span>
-      </label>
+      <p class="legal-links">
+        I agree to the
+        <router-link to="/terms">Terms</router-link> and
+        <router-link to="/privacy">Privacy Policy</router-link>.
+      </p>
 
       <button class="btn btn-primary">
-        <router-link to="/home">Save</router-link>
+        <router-link to="/learning-path">Save</router-link>
       </button>
 
       <p class="login-link">
@@ -136,6 +132,18 @@
 }
 
 /* Link */
+
+.legal-links {
+  font-size: 0.8rem;
+  color: #444;
+  text-align: center;
+  margin-top: 16px;
+}
+.legal-links a {
+  color: var(--color-blue);
+  text-decoration: underline;
+}
+
 .login-link {
   text-align: center;
   font-size: 0.85rem;
