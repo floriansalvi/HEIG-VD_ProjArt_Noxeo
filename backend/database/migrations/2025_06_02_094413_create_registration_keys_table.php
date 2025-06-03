@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('learning_blocks', function (Blueprint $table) {
+        Schema::create('registration_keys', function (Blueprint $table) {
             $table->id();
-            $table->integer('index')->default(0);
-            $table->foreignId('module_id')->constrained('modules')->onDelete('cascade');
-            $table->nullableMorphs('blockable');
+            $table->string('key', 32)->unique();
+            $table->foreignId('store_id')->constrained('stores')->onDelete('cascade');
             $table->timestamps();
-
-            $table->unique(['index', 'module_id']);
         });
     }
 
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('learning_blocks');
+        Schema::dropIfExists('registration_keys');
     }
 };

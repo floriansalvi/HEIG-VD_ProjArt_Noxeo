@@ -5,25 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Module extends Model
+class Badge extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'title',
+        'type',
         'img_path',
-        'availability_date',
-        'index',
         'category_id',
+        'module_id'
     ];
 
-    public function category()
-    {
+    public function category(){
         return $this->belongsTo(Category::class);
     }
 
-    public function steps()
-    {
-        return $this->hasMany(Step::class);
+    public function module(){
+        return $this->belongsTo(Module::class);
+    }
+
+    public function badgeCollections(){
+        return $this->hasMany(BadgeCollection::class);
     }
 }

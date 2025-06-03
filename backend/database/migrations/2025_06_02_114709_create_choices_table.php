@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('learning_blocks', function (Blueprint $table) {
+        Schema::create('choices', function (Blueprint $table) {
             $table->id();
-            $table->integer('index')->default(0);
-            $table->foreignId('module_id')->constrained('modules')->onDelete('cascade');
-            $table->nullableMorphs('blockable');
+            $table->foreignId('test_question_id')->constrained('test_questions')->onDelete('cascade');
+            $table->boolean('is_correct');
+            $table->nullableMorphs('choiceable');
             $table->timestamps();
-
-            $table->unique(['index', 'module_id']);
         });
     }
 
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('learning_blocks');
+        Schema::dropIfExists('choices');
     }
 };

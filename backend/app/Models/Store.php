@@ -26,4 +26,8 @@ class Store extends Model
     public function registrationKeys() {
         return $this->hasMany(RegistrationKey::class);
     }
+
+    public function users() {
+        return $this->hasManyThrough(User::class, RegistrationKey::class);
+    }
 }

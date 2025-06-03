@@ -5,20 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Market extends Model
+class RegistrationKey extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'img_path'
+        'key',
+        'store_id'
     ];
 
-    public function stores() {
-        return $this->hasMany(Store::class);
+    public function store() {
+        return $this->belongsTo(Store::class);
     }
 
     public function users() {
-        return $this->hasManyThrough(User::class, Store::class);
+        return $this->hasMany(User::class, 'registration_key_id');
     }
 }

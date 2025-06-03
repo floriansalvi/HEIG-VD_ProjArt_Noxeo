@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('learning_blocks', function (Blueprint $table) {
+        Schema::create('order_answers', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('game_question_id')->constrained('game_questions')->onDelete('cascade');
+            $table->text('content');
             $table->integer('index')->default(0);
-            $table->foreignId('module_id')->constrained('modules')->onDelete('cascade');
-            $table->nullableMorphs('blockable');
             $table->timestamps();
 
-            $table->unique(['index', 'module_id']);
+            $table->unique(['game_question_id', 'index']);
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('learning_blocks');
+        Schema::dropIfExists('order_answers');
     }
 };

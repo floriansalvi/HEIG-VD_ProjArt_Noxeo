@@ -11,14 +11,16 @@ class LearningBlock extends Model
 
     protected $fillable = [
         'index',
-        'module_id'
+        'module_id',
+        'blockable_id',
+        'blockable_type',
     ];
 
     public function module() {
         return $this->belongsTo(Module::class);
     }
 
-    public function textBlocks() {
-        return $this->hasMany(TextBlock::class);
+    public function blockable() {
+        return $this->morphTo();
     }
 }
