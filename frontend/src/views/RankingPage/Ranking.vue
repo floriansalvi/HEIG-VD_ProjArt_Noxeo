@@ -16,27 +16,26 @@
         />
       </div>
 
-      <!-- Highlighted user line if ranked -->
-      <div v-if="highlightedUser" class="user-highlight">
-        <span>{{ highlightedUser.rank }}.</span>
-        <span>{{ highlightedUser.name }}</span>
-        <span>{{ highlightedUser.points }}PTS</span>
+      <div class="ranking-scroll">
+        <div v-if="currentUser" class="user-highlight">
+          <span>{{ currentUser.rank }}.</span>
+          <span>{{ currentUser.name }}</span>
+          <span>{{ currentUser.points }}PTS</span>
+        </div>
+
+        <ul class="ranking-list">
+          <li
+            v-for="user in ranking"
+            :key="user.id"
+            :class="{ me: user.id === currentUserId }"
+          >
+            <span>{{ user.rank }}.</span>
+            <span>{{ user.name }}</span>
+            <span>{{ user.points }}PTS</span>
+          </li>
+        </ul>
       </div>
-
-      <ul class="ranking-list">
-        <li
-          v-for="user in ranking"
-          :key="user.id"
-          :class="{ me: user.id === currentUserId }"
-        >
-          <span>{{ user.rank }}.</span>
-          <span>{{ user.name }}</span>
-          <span>{{ user.points }}PTS</span>
-        </li>
-      </ul>
     </main>
-
-    <!-- Bottom tab toggle -->
     <div class="tab-toggle">
       <button
         :class="{ active: currentTab === 'world' }"
@@ -52,11 +51,10 @@
       </button>
     </div>
 
-    <!-- Info Modal -->
     <div v-if="showInfo" class="modal-overlay" @click.self="showInfo = false">
       <div class="modal">
         <button class="close-btn" @click="showInfo = false">&times;</button>
-        <h2>Why does the ranking matter ?</h2>
+        <h2>Why does the ranking matter?</h2>
         <p>
           The top 16 participants from each market will qualify to take part in
           the Breitling Cup as a team. The ranking is based on the points earned
@@ -64,10 +62,9 @@
           and for tests, speed also plays a key role.
         </p>
         <p>
-          During the tournament, the selected teams will face a series of
-          challenges designed to test their knowledge of the brand, its
-          products, and its services. Team spirit, expertise, and a passion for
-          Breitling will be key to making it to the top!
+          During the tournament, the selected teams will face challenges testing
+          their knowledge of the brand, its products and services. Team spirit
+          and passion will be key!
         </p>
       </div>
     </div>
@@ -82,81 +79,89 @@ import infoIcon from '@/assets/icons/info.png'
 
 const currentTab = ref('world')
 const ranking = ref([])
+const currentUser = ref(null)
 const menuVisible = ref(false)
 const showInfo = ref(false)
-const currentUserId = 10 // À remplacer plus tard par store/auth
+const currentUserId = 10 // simulate auth user
 
 const toggleMenu = () => (menuVisible.value = !menuVisible.value)
 
-const highlightedUser = ref(null)
-
 async function fetchRanking(type) {
-  // Simulation (à remplacer par appel backend réel)
   const data =
     type === 'world'
       ? [
           { id: 1, name: 'Xu Lee', points: 12300 },
           { id: 2, name: 'Marco', points: 12100 },
           { id: 10, name: 'Michael', points: 7300, rank: 82 },
-          // ...
         ]
       : [
           { id: 1, name: 'Nadia', points: 9700 },
           { id: 2, name: 'Noémie', points: 9500 },
           { id: 10, name: 'Michael', points: 7300, rank: 10 },
-          // ...
         ]
 
-  ranking.value = data.slice(0, 16).map((u, i) => ({ ...u, rank: i + 1 }))
-  highlightedUser.value = data.find(
-    (u) => u.id === currentUserId && u.rank > 16
-  )
+  const sorted = data.slice(0, 16).map((u, i) => ({ ...u, rank: i + 1 }))
+  const current = data.find((u) => u.id === currentUserId)
+
+  currentUser.value = current ? { ...current } : null
+  ranking.value = sorted.filter((u) => u.id !== currentUserId)
 }
 
-watch(currentTab, (newTab) => {
-  fetchRanking(newTab)
-})
-
-onMounted(() => {
-  fetchRanking(currentTab.value)
-})
+watch(currentTab, () => fetchRanking(currentTab.value))
+onMounted(() => fetchRanking(currentTab.value))
 </script>
 
 <style scoped>
 .ranking-page {
   padding-top: 80px;
-  min-height: 100vh;
   background: white;
-  position: relative;
+  min-height: 100vh;
   font-family: var(--font-family-main);
+  display: flex;
+  flex-direction: column;
 }
 
 .ranking-main {
-  padding: 24px 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .ranking-header {
+  position: sticky;
+  top: 80px;
+  background: white;
+  z-index: 10;
+  padding: 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.info-icon {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  padding: 0.7rem;
+}
+
+.ranking-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 16px;
 }
 
 .user-highlight {
-  background-color: #fff4b0;
-  border-radius: 12px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
+  background: #fff;
+  border: 1px solid black;
+
+  padding: 10px 14px;
+  margin: 1rem 0rem;
   font-weight: bold;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-.info-icon {
-  width: 23px;
-  height: 23px;
-  cursor: pointer;
-  padding: 0.7rem;
 }
 
 .ranking-list {
@@ -168,8 +173,7 @@ onMounted(() => {
 .ranking-list li {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 14px 16px;
+  padding: 14px 0;
   border-bottom: 1px solid #e2e2e2;
   font-size: 1rem;
 }
@@ -181,39 +185,44 @@ onMounted(() => {
 
 .tab-toggle {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
   display: flex;
   justify-content: space-evenly;
-  background: white;
-  border-top: 1px solid #e2e2e2;
-  padding: 10px 0;
+  border: 1.5px solid black;
+  background-color: white;
+  width: 90%;
+  max-width: 320px;
+}
+
+.tab-toggle {
+  border: 1.5px solid black;
+
+  overflow: hidden;
+  width: 90%;
+  max-width: 300px;
 }
 
 .tab-toggle button {
   flex: 1;
+  padding: 12px 0;
+  background-color: white;
+  color: black;
   border: none;
-  background: transparent;
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  position: relative;
-  padding-bottom: 4px;
+  transition: background 0.2s;
 }
 
 .tab-toggle button.active {
-  border-bottom: 2px solid black;
+  background-color: black;
+  color: white;
 }
 
-.info-btn {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-
-/* Modale info */
+/* Modal */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -221,15 +230,14 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: 50;
 }
 
 .modal {
   background: white;
   max-width: 360px;
   padding: 24px;
-  border-radius: 8px;
-  box-shadow: 0 0 16px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
   position: relative;
 }
 
