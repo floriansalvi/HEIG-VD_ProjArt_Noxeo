@@ -34,10 +34,8 @@ class GameQuestionProgressRequest extends FormRequest
         return [
             'game_progress_id.required' => 'The game progress id is required.',
             'game_progress_id.exists' => 'The selected game progress id is invalid.',
-            
             'game_question_id.required' => 'The game question id is required.',
             'game_question_id.exists' => 'The selected game question id is invalid.',
-
             'is_successful.required' => 'The is_successful field is required.',
             'is_successful.boolean' => 'The is_successful field must be a boolean.'
         ];

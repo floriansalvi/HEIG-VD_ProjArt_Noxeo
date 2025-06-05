@@ -21,21 +21,32 @@ class RegisteredUserController extends Controller
     public function store(Request $request): Response
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'surname' => ['required', 'string', 'max:255'],
+            'firstname' => ['required', 'string', 'max:255'],
+            'nickname' => ['required', 'string', 'max:255', 'unique:users'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'registration_key_id' => ['required', 'exists:registration_keys,id']
         ]);
 
         $user = User::create([
-            'name' => $request->name,
+            'surname' => $request->surname,
+            'firstname' => $request->firstname,
+            'nickname' => $request->nickname,
             'email' => $request->email,
             'password' => Hash::make($request->string('password')),
+            'registration_key_id' => $request->registration_key_id,
+            'is_mail_confirmed' => false
         ]);
+
+        $user->sendVerificationKey();
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return response()->noContent();
+        return response()->json([
+            'message' => 'User registered. Verification code sent to email'
+        ]);
     }
 }

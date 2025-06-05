@@ -34,15 +34,12 @@ class GameProgressRequest extends FormRequest
         return [
             'game_id.required' => 'The game id is required.',
             'game_id.exists' => 'The selected game id is invalid.',
-
             'last_play.required' => 'The last_play field is required.',
             'last_play.date_format' => 'The last_play field format must be yyyy-mm-dd hh:mm:ss',
             'last_play.before_or_equal' => 'The last_play field must not be in the future.',
-
             'score.required' => 'The score is required.',
             'score.integer' => 'The score must be an integer.',
             'score.min' => 'The score must be at least 0.',
-
             'is_complete.required' => 'The is_complete field is required.',
             'is_complete.boolean' => 'The is_complete field must be a boolean.'
         ];

@@ -3,11 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Mail\VerificationKeyMail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Mail;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -76,5 +79,27 @@ class User extends Authenticatable
 
     public function gameProgresses() {
         return $this->hasMany(GameProgress::class);
+    }
+
+    public function gameQuestionProgresses() {
+        return $this->hasMany(GameQuestionProgress::class);
+    }
+
+    public function badges() {
+        return $this->belongsToMany(Badge::class, 'badge_collections');
+    }
+
+    public function fullName() {
+        return "{$this->firsname} {$this->surname}";
+    }
+
+    public function sendVerificationKey() {
+        $this->verificationKey()?->delete();
+
+        $code = random_int(100000, 999999);
+
+        $this->verificationKey()->create(['content' => $code]);
+
+        Mail::to($this->email)->send(new VerificationKeyMail($code));
     }
 }

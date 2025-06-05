@@ -29,7 +29,11 @@ class Step extends Model
         return $this->hasMany(Step::class, 'next_step');
     }
 
-    public function testProgresses(){
-        return $this->hasMany(TestProgress::class);
+    public function test() {
+        return $this->hasOne(Test::class);
+    }
+
+    public function game() {
+        return $this->hasOne(Game::class);
     }
 }

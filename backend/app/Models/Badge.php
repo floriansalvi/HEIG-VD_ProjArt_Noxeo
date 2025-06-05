@@ -27,4 +27,8 @@ class Badge extends Model
     public function badgeCollections(){
         return $this->hasMany(BadgeCollection::class);
     }
+
+    public function users() {
+        return $this->belongsToMany(User::class, 'badge_collections');
+    }
 }

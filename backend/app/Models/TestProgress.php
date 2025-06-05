@@ -11,7 +11,7 @@ class TestProgress extends Model
 
     protected $fillable = [
         'user_id',
-        'step_id',
+        'test_id',
         'attempt_date',
         'score',
         'time_bonus',
@@ -22,7 +22,7 @@ class TestProgress extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function step() {
-        return $this->belongsTo(Step::class);
+    public function test() {
+        return $this->belongsTo(Test::class);
     }
 }

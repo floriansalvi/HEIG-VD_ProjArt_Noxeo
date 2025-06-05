@@ -24,6 +24,16 @@ class Module extends Model
 
     public function steps()
     {
-        return $this->hasMany(Step::class);
+        return $this->hasMany(Step::class)->orderBy('index');
     }
+
+    public function badges() {
+        return $this->hasMany(Badge::class);
+    }
+
+    public function learningBlocks() {
+        return $this->hasMany(LearningBlock::class)->orderBy('index');
+    }
+
+
 }
