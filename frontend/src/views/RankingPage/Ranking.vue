@@ -153,21 +153,26 @@ onMounted(() => fetchRanking(currentTab.value))
 }
 
 .user-highlight {
+  position: fixed;
+  top: 14rem; /* ajuste selon ton layout exact */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
   background: #fff;
   border: 1px solid black;
-
   padding: 10px 14px;
-  margin: 1rem 0rem;
   font-weight: bold;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 90%;
+  max-width: 320px;
 }
 
 .ranking-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 6rem 0 0 0; /* ✅ Ajout d'une marge en haut pour ne pas chevaucher user-highlight */
 }
 
 .ranking-list li {

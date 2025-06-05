@@ -1,23 +1,30 @@
 <template>
-  <div class="home-learning">
+  <div class="learning-scroll-page">
     <AppHeader @menu="toggleMenu" />
     <AppMenu :show="menuVisible" />
 
-    <main class="learning-main">
-      <h1 class="title">Learning path</h1>
-      <p class="subtitle">scroll your path !</p>
+    <!-- cadran fixe -->
+    <div class="cadran-fixed">
+      <img src="@/assets/cadran.jpg" alt="cadran" />
+    </div>
 
-      <div class="timeline-container">
-        <div class="module">
-          <h2>History</h2>
-          <p class="meta">Onboarding · 1000PTS</p>
-          <p class="desc">
-            In this module, you'll discover the rich history of Breitling from
-            its founding in 1884 to its key innovations and iconic moments.
-          </p>
-        </div>
-      </div>
-    </main>
+    <!-- scrollable modules -->
+    <div class="modules-scroll">
+      <section v-for="(step, index) in steps" :key="index" class="module-step">
+        <h2>{{ step.title }}</h2>
+        <p class="meta">{{ step.category }} · {{ step.points }}PTS</p>
+        <p class="desc">{{ step.description }}</p>
+        <button class="start-btn">{{ step.buttonLabel }}</button>
+      </section>
+    </div>
+    <div class="modules-scroll">
+      <section v-for="(step, index) in steps" :key="index" class="module-step">
+        <h2>{{ step.title }}</h2>
+        <p class="meta">{{ step.category }} · {{ step.points }}PTS</p>
+        <p class="desc">{{ step.description }}</p>
+        <button class="start-btn">{{ step.buttonLabel }}</button>
+      </section>
+    </div>
   </div>
 </template>
 
@@ -30,63 +37,102 @@ const menuVisible = ref(false)
 function toggleMenu() {
   menuVisible.value = !menuVisible.value
 }
+
+const steps = [
+  {
+    title: 'History',
+    category: 'Onboarding',
+    points: 1000,
+    description:
+      "You'll discover the rich history of Breitling from 1884 to its key moments.",
+    buttonLabel: 'Start lesson',
+  },
+  {
+    title: 'Test History',
+    category: 'Onboarding',
+    points: 10000,
+    description:
+      'This test will check your understanding of Breitling’s heritage and key facts.',
+    buttonLabel: 'Start test',
+  },
+  // Ajoute d’autres modules ici
+]
 </script>
 
 <style scoped>
-.home-learning {
-  background-color: white;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+.learning-scroll-page {
   position: relative;
+  background: white;
+  height: 100vh;
+  overflow-x: hidden;
+  font-family: var(--font-family-main);
 }
 
-.learning-main {
-  padding: 24px 16px;
-  flex: 1;
-  margin-top: 80px; /* pour laisser la place au header */
+.cadran-fixed {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  max-width: 500px;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  pointer-events: none;
 }
 
-.title {
+.cadran-fixed img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.modules-scroll {
+  position: relative;
+  z-index: 1;
+  padding-top: 100vh; /* pour que le premier scroll n'écrase pas la montre */
+}
+
+.module-step {
+  height: 100vh;
+  padding: 40vh 16px 0;
+  text-align: center;
+}
+
+.module-step h2 {
   font-size: 1.5rem;
   font-weight: bold;
-  margin-bottom: 4px;
 }
 
-.subtitle {
-  color: #666;
-  margin-bottom: 24px;
-}
-
-.timeline-container {
-  position: relative;
-  overflow-x: hidden;
-}
-
-.module {
-  margin-top: 0;
-  position: relative;
-  z-index: 2;
-  padding: 24px 16px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.module h2 {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin: 0 0 4px;
-}
-
-.module .meta {
-  font-size: 0.9rem;
-  color: #444;
-  margin-bottom: 12px;
-}
-
-.module .desc {
+.meta {
+  margin: 8px 0 16px;
   font-size: 0.95rem;
-  line-height: 1.4;
+}
+
+.desc {
+  font-size: 1rem;
+  max-width: 80%;
+  margin: 0 auto 24px;
+}
+
+.start-btn {
+  background-color: #ffc72c;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+.modules-scroll {
+  position: relative;
+  z-index: 1;
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  height: 100vh;
+}
+
+.module-step {
+  height: 100vh;
+  padding-top: 45vh;
+  text-align: center;
+  scroll-snap-align: start;
 }
 </style>
