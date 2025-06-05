@@ -1,30 +1,41 @@
 <template>
-  <div class="learning-scroll-page">
+  <div class="learning-path">
     <AppHeader @menu="toggleMenu" />
-    <AppMenu :show="menuVisible" />
+    <AppMenu :show="menuVisible" @close="menuVisible = false" />
 
-    <!-- cadran fixe -->
-    <div class="cadran-fixed">
-      <img src="@/assets/cadran.jpg" alt="cadran" />
+    <!-- cadran en fond partiellement visible -->
+    <div class="cadran-mask">
+      <img src="@/assets/cadran.jpg" class="cadran-img" alt="Cadran" />
     </div>
 
-    <!-- scrollable modules -->
-    <div class="modules-scroll">
-      <section v-for="(step, index) in steps" :key="index" class="module-step">
-        <h2>{{ step.title }}</h2>
-        <p class="meta">{{ step.category }} · {{ step.points }}PTS</p>
-        <p class="desc">{{ step.description }}</p>
-        <button class="start-btn">{{ step.buttonLabel }}</button>
+    <main class="modules">
+      <h1 class="title">Learning path</h1>
+      <p class="subtitle">scroll your path !</p>
+
+      <section class="module-step">
+        <h2 class="module-title">History</h2>
+        <p class="module-meta">Onboarding · 1000PTS</p>
+        <p class="module-desc">
+          In this module, you’ll discover the rich history of Breitling from its
+          founding in 1884 to its key innovations and iconic moments.
+        </p>
+        <button class="module-button" @click="console.log('Start lesson')">
+          start lesson
+        </button>
       </section>
-    </div>
-    <div class="modules-scroll">
-      <section v-for="(step, index) in steps" :key="index" class="module-step">
-        <h2>{{ step.title }}</h2>
-        <p class="meta">{{ step.category }} · {{ step.points }}PTS</p>
-        <p class="desc">{{ step.description }}</p>
-        <button class="start-btn">{{ step.buttonLabel }}</button>
+
+      <section class="module-step">
+        <h2 class="module-title">Test history</h2>
+        <p class="module-meta">Onboarding · 10’000PTS</p>
+        <p class="module-desc">
+          This test will check your understanding of Breitling’s heritage from
+          its 1884 origins to its major innovations and timepieces.
+        </p>
+        <button class="module-button" @click="console.log('Start test')">
+          start test
+        </button>
       </section>
-    </div>
+    </main>
   </div>
 </template>
 
@@ -37,102 +48,91 @@ const menuVisible = ref(false)
 function toggleMenu() {
   menuVisible.value = !menuVisible.value
 }
-
-const steps = [
-  {
-    title: 'History',
-    category: 'Onboarding',
-    points: 1000,
-    description:
-      "You'll discover the rich history of Breitling from 1884 to its key moments.",
-    buttonLabel: 'Start lesson',
-  },
-  {
-    title: 'Test History',
-    category: 'Onboarding',
-    points: 10000,
-    description:
-      'This test will check your understanding of Breitling’s heritage and key facts.',
-    buttonLabel: 'Start test',
-  },
-  // Ajoute d’autres modules ici
-]
 </script>
 
 <style scoped>
-.learning-scroll-page {
-  position: relative;
-  background: white;
-  height: 100vh;
+.learning-path {
+  background-color: white;
+  min-height: 100vh;
   overflow-x: hidden;
-  font-family: var(--font-family-main);
+  position: relative;
 }
 
-.cadran-fixed {
+.cadran-mask {
   position: fixed;
-  top: 50%;
-  left: 50%;
+  top: 0;
+  left: 0;
   width: 100vw;
-  max-width: 500px;
-  transform: translate(-50%, -50%);
-  z-index: 5;
+  height: 280px;
+  overflow: hidden;
+  z-index: 0;
   pointer-events: none;
 }
 
-.cadran-fixed img {
+.cadran-img {
   width: 100%;
-  height: auto;
-  display: block;
+  object-fit: cover;
+  object-position: top center;
+  opacity: 1;
 }
 
-.modules-scroll {
+.modules {
   position: relative;
   z-index: 1;
-  padding-top: 100vh; /* pour que le premier scroll n'écrase pas la montre */
+  padding: 32px 16px;
+  margin-top: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: #111;
+}
+
+.subtitle {
+  color: #444;
+  margin-bottom: 32px;
 }
 
 .module-step {
-  height: 100vh;
-  padding: 40vh 16px 0;
-  text-align: center;
+  background: white;
+  padding: 24px 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.module-step h2 {
-  font-size: 1.5rem;
+.module-title {
+  font-size: 1.3rem;
   font-weight: bold;
+  margin-bottom: 8px;
 }
 
-.meta {
-  margin: 8px 0 16px;
+.module-meta {
   font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 16px;
 }
 
-.desc {
+.module-desc {
   font-size: 1rem;
-  max-width: 80%;
-  margin: 0 auto 24px;
+  line-height: 1.5;
+  color: #222;
+  margin-bottom: 24px;
 }
 
-.start-btn {
-  background-color: #ffc72c;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: bold;
+.module-button {
+  background-color: #f5c338;
   border: none;
+  padding: 12px 20px;
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 8px;
   cursor: pointer;
-}
-.modules-scroll {
-  position: relative;
-  z-index: 1;
-  scroll-snap-type: y mandatory;
-  overflow-y: scroll;
-  height: 100vh;
-}
-
-.module-step {
-  height: 100vh;
-  padding-top: 45vh;
-  text-align: center;
-  scroll-snap-align: start;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 </style>

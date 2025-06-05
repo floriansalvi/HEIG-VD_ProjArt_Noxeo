@@ -10,6 +10,8 @@ import Novelties from '@/views/LearningPage/LearningCategory/Novelties.vue'
 import Terms from '@/views/static/Terms.vue'
 import Privacy from '@/views/static/Privacy.vue'
 import Ranking from '@/views/RankingPage/Ranking.vue'
+import Profile from '@/views/ProfilePage/Profile.vue'
+import Settings from '@/views/SettingsPage/Settings.vue'
 
 const routes = [
   { path: '/', name: 'Login', component: Login },
@@ -23,6 +25,8 @@ const routes = [
   { path: '/terms', name: 'terms', component: Terms },
   { path: '/privacy', name: 'privacy', component: Privacy },
   { path: '/ranking', name: 'ranking', component: Ranking },
+  { path: '/profile', name: 'profile', component: Profile },
+  { path: '/settings', name: 'settings', component: Settings },
 ]
 
 const router = createRouter({
