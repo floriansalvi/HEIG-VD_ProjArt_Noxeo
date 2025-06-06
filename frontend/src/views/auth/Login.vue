@@ -1,3 +1,42 @@
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import auth from '@/services/auth.js'
+
+const router = useRouter()
+
+const email = ref('')
+const password = ref('')
+
+const error = ref('')
+const loading = ref(false)
+
+const handleLogin = async () => {
+  loading.value = true
+  error.value = ''
+
+  if (!email.value || !password.value) {
+    error.value = "Both fields are required"
+    loading.value = false;
+    return
+  }
+
+  try {
+    await auth.login(email.value, password.value)
+    await router.push('/learning-path')
+  } catch (err) {
+    if (err?.message.includes('422')) {
+      error.value = 'Invalid credentials'
+    } else {
+      error.value = 'Login failed. Please try again.'
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
+</script>
+
 <template>
   <div class="login-page">
     <div class="login-header">
@@ -8,27 +47,42 @@
       />
     </div>
 
-    <div class="login-form">
-      <input type="text" placeholder="user id" class="input" />
+    <form class="login-form">
+      <input
+        type="text"
+        v-model="email"
+        placeholder="user id"
+        class="input"
+      />
 
       <div class="input-wrapper">
-        <input type="password" placeholder="password" class="input" />
+        <input
+          type="password"
+          v-model="password"
+          placeholder="password"
+          class="input"
+        />
         <a href="#" class="forgot">Forgot ?</a>
       </div>
-    </div>
+
+      <p v-if="error">{{ error }}</p>
+    </form>
 
     <div class="login-footer">
-      <button class="btn btn-primary">Log in</button>
+      <button
+        class="btn btn-primary"
+        :disabled="loading"
+        @click="handleLogin"
+      >
+        <span v-if="loading">Logging in...</span>
+        <span v-else>Log in</span>
+      </button>
       <p class="signup-link">
-        <router-link to="/register">I don’t have an account yet</router-link>
+        <router-link to="/key">I don’t have an account yet</router-link>
       </p>
     </div>
   </div>
 </template>
-
-<script setup>
-// Future: v-model, emits, etc.
-</script>
 
 <style scoped>
 .login-page {
@@ -115,6 +169,12 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
+}
+
+span {
+  color: white;
+  font-size: 1rem;
+  font-family: var(--font-family-main);
 }
 
 .signup-link {

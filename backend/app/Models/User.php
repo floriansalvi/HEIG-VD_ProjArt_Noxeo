@@ -90,7 +90,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     public function fullName() {
-        return "{$this->firsname} {$this->surname}";
+        return "{$this->firstname} {$this->surname}";
     }
 
     public function sendVerificationKey() {

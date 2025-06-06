@@ -1,3 +1,42 @@
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import auth from '@/services/auth.js'
+
+const router = useRouter()
+
+const key = ref('')
+
+const error = ref('')
+const loading = ref(false)
+
+const handleKeySubmit = async () => {
+  loading.value = true
+  error.value = ''
+
+  if (!key.value) {
+    error.value = "Field required"
+    loading.value = false;
+    return
+  }
+
+  try {
+    const keyData = await auth.submitRegistrationKey(key.value)
+    sessionStorage.setItem('key_id', keyData.registration_key.id)
+    await router.push('/register')
+  } catch (err) {
+    if (err.response?.status === 404 || err.message.includes('404')) {
+      error.value = 'Invalid key.'
+    } else {
+      error.value = 'Submission failed. Please try again.'
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
+</script>
+
 <template>
   <div class="register-page">
     <div class="register-header">
@@ -8,23 +47,29 @@
       />
     </div>
 
-    <div class="register-form">
-      <input type="text" placeholder="key access" class="input" />
-
-      <button class="btn btn-primary">
-        <router-link to="/register-step-2">Continue</router-link>
+    <form class="register-form">
+      <input
+          type="text"
+          v-model="key"
+          placeholder="key"
+          class="input"
+        />
+      <p v-if="error">{{ error }}</p>
+      <button
+        class="btn btn-primary"
+        :disabled="loading"
+        @click="handleKeySubmit"
+      >
+        <span v-if="loading">Loading…</span>
+        <span v-else>Submit</span>
       </button>
 
       <p class="login-link">
         <router-link to="/">I already have an account</router-link>
       </p>
-    </div>
+    </form>
   </div>
 </template>
-
-<script setup>
-// Future use: emits, navigation, validation, etc.
-</script>
 
 <style scoped>
 .register-page {
@@ -80,6 +125,12 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
+}
+
+span {
+  color: white;
+  font-size: 1rem;
+  font-family: var(--font-family-main);
 }
 
 .login-link {

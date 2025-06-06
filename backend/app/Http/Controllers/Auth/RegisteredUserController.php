@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -18,13 +19,13 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): Response
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'surname' => ['required', 'string', 'max:255'],
             'firstname' => ['required', 'string', 'max:255'],
             'nickname' => ['required', 'string', 'max:255', 'unique:users'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'registration_key_id' => ['required', 'exists:registration_keys,id']
         ]);
@@ -34,14 +35,12 @@ class RegisteredUserController extends Controller
             'firstname' => $request->firstname,
             'nickname' => $request->nickname,
             'email' => $request->email,
-            'password' => Hash::make($request->string('password')),
+            'password' => Hash::make($request->password),
             'registration_key_id' => $request->registration_key_id,
             'is_mail_confirmed' => false
         ]);
 
         $user->sendVerificationKey();
-
-        event(new Registered($user));
 
         Auth::login($user);
 

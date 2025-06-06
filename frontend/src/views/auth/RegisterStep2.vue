@@ -1,4 +1,66 @@
+<script setup>
+import { ref, onMounted, inject } from 'vue'
+import { useRouter } from 'vue-router'
+import auth from '@/services/auth.js'
+
+const $http = inject('$http');
+
+const router = useRouter()
+const loading = ref(false)
+
+const error = ref('')
+
+const surname = ref('')
+const firstname = ref('')
+const nickname = ref('')
+const email = ref('')
+const password = ref('')
+const passwordConfirmation = ref('')
+const key = ref(sessionStorage.getItem('key_id') || '')
+
+const handleRegistration = async () => {
+  loading.value = true
+  try {
+    await $http.get('/sanctum/csrf-cookie');
+    await auth.registerUser({
+      surname: surname.value,
+      firstname: firstname.value,
+      nickname: nickname.value,
+      email: email.value,
+      password: password.value,
+      password_confirmation: passwordConfirmation.value,
+      registration_key_id: key.value
+    })
+    sessionStorage.removeItem('key_id')
+    key.value = ''
+    await router.push('/verify-email')
+  } catch (err) {
+  console.error('Registration error:', err); // 👈 Ajoute ceci
+
+  if (err?.response?.status === 422) {
+    const errors = err.response.data.errors || {};
+    error.value = Object.values(errors).flat().join(', ');
+  } else if (err?.response?.status === 500) {
+    // 👇 Optionnel mais utile
+    error.value = 'Erreur serveur (500) : ' + (err.response?.data?.message || 'Internal Server Error');
+  } else {
+    error.value = 'Login failed. Please try again.';
+  }
+
+  loading.value = false;
+}
+}
+
+onMounted(() => {
+  if (!key.value) {
+    router.push('/key')
+  }
+})
+
+</script>
+
 <template>
+  <h1 v-if="key">{{ key }}</h1>
   <div class="register-page">
     <div class="register-header">
       <img
@@ -10,19 +72,46 @@
 
     <div class="register-form">
       <div class="input-row">
-        <input type="text" placeholder="surname" class="input" />
-        <input type="text" placeholder="name" class="input" />
+        <input
+          type="text"
+          v-model="surname"
+          placeholder="Surname"
+          class="input"
+        />
+        <input
+          type="text"
+          v-model="firstname"
+          placeholder="Firstname"
+          class="input"
+        />
       </div>
 
-      <input type="text" placeholder="nickname" class="input" />
-      <input type="email" placeholder="email" class="input" />
-      <input type="url" placeholder="personal website" class="input" />
-      <input type="password" placeholder="password" class="input" />
       <input
-        type="password"
-        placeholder="password confirmation"
-        class="input"
+          type="text"
+          v-model="nickname"
+          placeholder="Nickname"
+          class="input"
+        />
+      <input
+          type="email"
+          v-model="email"
+          placeholder="Email"
+          class="input"
+        />
+      <input
+          type="password"
+          v-model="password"
+          placeholder="Password"
+          class="input"
+        />
+      <input
+          type="password"
+          v-model="passwordConfirmation"
+          placeholder="Confirm password"
+          class="input"
       />
+
+      <p v-if="error">{{ error }}</p>
 
       <p class="legal-links">
         I agree to the
@@ -30,8 +119,9 @@
         <router-link to="/privacy">Privacy Policy</router-link>.
       </p>
 
-      <button class="btn btn-primary">
-        <router-link to="/learning-path">Save</router-link>
+      <button class="btn btn-primary" @click="handleRegistration" :disabled="loading">
+        <span v-if="loading">Registering...</span>
+        <span v-else>Register</span>
       </button>
 
       <p class="login-link">
@@ -40,10 +130,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-// ready for v-model binding
-</script>
 
 <style scoped>
 .register-page {

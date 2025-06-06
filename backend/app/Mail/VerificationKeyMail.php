@@ -26,7 +26,7 @@ class VerificationKeyMail extends Mailable
     public function build()
     {
         return $this->subject('B League - Verification code')
-            ->view('emails.verification-key')
+            ->view('emails.verification-code')
             ->with([
                 'code' => $this->code
             ]);
