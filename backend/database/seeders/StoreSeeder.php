@@ -23,6 +23,16 @@ class StoreSeeder extends Seeder
                 'email' => 'florian.salvi@heig-vd.ch',
                 'phone' => '0792946303',
                 'market_id' => 1
+            ],
+            [
+                'id' => 2,
+                'name' => 'Breitling HQ',
+                'address' => 'Léon Breitling-Strasse 2',
+                'zip_code' => '2540',
+                'city' => 'Grenchen',
+                'email' => 'contact@breitling.com',
+                'phone' => ' 0326545454',
+                'market_id' => 2
             ]
         ]);
     }

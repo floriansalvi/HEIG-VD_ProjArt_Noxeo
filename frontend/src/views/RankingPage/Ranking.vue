@@ -1,3 +1,60 @@
+<script setup>
+import { ref, watch, onMounted, inject } from 'vue'
+import AppHeader from '@/layouts/AppHeader.vue'
+import AppMenu from '@/layouts/AppMenu.vue'
+import infoIcon from '@/assets/icons/info.png'
+import { useRouter } from 'vue-router'
+import auth from '@/services/auth'
+
+const $http = inject('$http');
+
+const router = useRouter()
+
+const currentTab = ref('world')
+const ranking = ref([])
+const currentUser = ref(auth.user)
+const menuVisible = ref(false)
+const showInfo = ref(false)
+
+const toggleMenu = () => (menuVisible.value = !menuVisible.value)
+
+async function fetchRanking(type) {
+  try {
+    await $http.get('/sanctum/csrf-cookie')
+    const url = type === 'world' ? '/api/v1/leaderboard' : '/api/v1/leaderboard/market'
+    const response = await $http.get(url)
+
+    const data = response.data.data.ranking || response.data.data
+
+    const transformed = data.map((user, index) =>({
+      id: user.user_id,
+      name: user.nickname,
+      points: Number(user.total_score) + 2000000,
+      rank: index + 1
+    }))
+
+    ranking.value = transformed
+
+    console.log('auth.user.value:', auth.user.value)
+
+    const userInRanking = transformed.find(u => u.id === auth.user.value.id)
+    if(userInRanking) {
+      currentUser.value = userInRanking
+    } else {
+      currentUser.value = null // ou garde auth.user si tu veux
+    }
+
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+watch(currentTab, () => fetchRanking(currentTab.value))
+onMounted(() => {
+  fetchRanking(currentTab.value)
+})
+</script>
+
 <template>
   <div class="ranking-page">
     <AppHeader @menu="toggleMenu" />
@@ -20,18 +77,18 @@
         <div v-if="currentUser" class="user-highlight">
           <span>{{ currentUser.rank }}.</span>
           <span>{{ currentUser.name }}</span>
-          <span>{{ currentUser.points }}PTS</span>
+          <span>{{ currentUser.points }} PTS</span>
         </div>
 
         <ul class="ranking-list">
           <li
             v-for="user in ranking"
             :key="user.id"
-            :class="{ me: user.id === currentUserId }"
+            :class="{ me: user.id === currentUser?.id }"
           >
             <span>{{ user.rank }}.</span>
             <span>{{ user.name }}</span>
-            <span>{{ user.points }}PTS</span>
+            <span>{{ user.points }} PTS</span>
           </li>
         </ul>
       </div>
@@ -70,46 +127,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref, watch, onMounted } from 'vue'
-import AppHeader from '@/layouts/AppHeader.vue'
-import AppMenu from '@/layouts/AppMenu.vue'
-import infoIcon from '@/assets/icons/info.png'
-
-const currentTab = ref('world')
-const ranking = ref([])
-const currentUser = ref(null)
-const menuVisible = ref(false)
-const showInfo = ref(false)
-const currentUserId = 10 // simulate auth user
-
-const toggleMenu = () => (menuVisible.value = !menuVisible.value)
-
-async function fetchRanking(type) {
-  const data =
-    type === 'world'
-      ? [
-          { id: 1, name: 'Xu Lee', points: 12300 },
-          { id: 2, name: 'Marco', points: 12100 },
-          { id: 10, name: 'Michael', points: 7300, rank: 82 },
-        ]
-      : [
-          { id: 1, name: 'Nadia', points: 9700 },
-          { id: 2, name: 'Noémie', points: 9500 },
-          { id: 10, name: 'Michael', points: 7300, rank: 10 },
-        ]
-
-  const sorted = data.slice(0, 16).map((u, i) => ({ ...u, rank: i + 1 }))
-  const current = data.find((u) => u.id === currentUserId)
-
-  currentUser.value = current ? { ...current } : null
-  ranking.value = sorted.filter((u) => u.id !== currentUserId)
-}
-
-watch(currentTab, () => fetchRanking(currentTab.value))
-onMounted(() => fetchRanking(currentTab.value))
-</script>
 
 <style scoped>
 .ranking-page {

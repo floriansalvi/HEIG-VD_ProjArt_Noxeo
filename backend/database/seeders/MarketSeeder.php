@@ -18,6 +18,11 @@ class MarketSeeder extends Seeder
                 'id' => 1,
                 'name' => 'Heig',
                 'img_path' => '/heig.jpg'
+            ],
+            [
+                'id' => 2,
+                'name' => 'Switzerland',
+                'img_path' => '/switzerlabd.jpg'
             ]
         ]);
     }

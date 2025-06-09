@@ -18,6 +18,11 @@ class RegistrationKeySeeder extends Seeder
                 'id' => 1,
                 'key' => 'heig-vd',
                 'store_id' => 1
+            ],
+            [
+                'id' => 2,
+                'key' => 'ch-grenchen',
+                'store_id' => 2
             ]
         ]);
     }

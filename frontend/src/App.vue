@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-// rien ici pour l'instant
+  import { RouterView } from 'vue-router';
 </script>
 
 <style>
