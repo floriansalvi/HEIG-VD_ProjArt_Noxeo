@@ -55,7 +55,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import AppHeader from '@/layouts/AppHeader.vue'
 import AppMenu from '@/layouts/AppMenu.vue'
 import Badge from '@/components/Profile/Badge.vue'
@@ -65,30 +66,16 @@ const menuVisible = ref(false)
 const toggleMenu = () => (menuVisible.value = !menuVisible.value)
 
 const user = ref({
-  name: 'Michael',
-  points: 3800,
+  name: '',
+  points: 0,
   avatar: '/assets/image.png',
-  titles: [
-    { name: 'Aviator', icon: 'aviator.png', earned: true },
-    { name: 'Chrono-Master', icon: 'chronomaster.png', earned: true },
-  ],
-  novelties: [
-    { name: 'Professional', earned: true },
-    { name: 'Chronomat', earned: true },
-    { name: 'Classic AVI', earned: true },
-    { name: 'Top Time', earned: true },
-    { name: 'Superocean', earned: true },
-  ],
-  specials: [
-    { name: "Mother's Day", earned: true },
-    { name: 'History', earned: true },
-    { name: 'Collections', earned: true },
-    { name: 'Technique', earned: true },
-  ],
+  titles: [],
+  novelties: [],
+  specials: [],
 })
 
 const steps = ['Onboarding', 'Discovery', 'Novelties']
-const isStepDone = (i) => false // aucun de base validé
+const isStepDone = (i) => false // Tu peux ajouter une logique réelle ici plus tard
 
 const hasSpecialist = computed(
   () =>
@@ -113,6 +100,33 @@ const mainTitle = computed(() => {
 
 const novelties = computed(() => user.value.novelties)
 const specials = computed(() => user.value.specials)
+
+onMounted(async () => {
+  try {
+    // ✅ Récupère l'utilisateur connecté
+    const { data: userData } = await axios.get('/api/user', {
+      withCredentials: true,
+    })
+    user.value.name = `${userData.firstname} ${userData.surname}`
+    user.value.avatar = userData.avatar || '/assets/image.png'
+
+    // ✅ Récupère le score total
+    const { data: scoreData } = await axios.get('/api/v1/user/score', {
+      withCredentials: true,
+    })
+    user.value.points = scoreData.total_score ?? 0
+
+    // ✅ Récupère les badges
+    const { data: badgeData } = await axios.get('/api/v1/user/badges', {
+      withCredentials: true,
+    })
+    user.value.titles = badgeData.filter((b) => b.category === 'title')
+    user.value.novelties = badgeData.filter((b) => b.category === 'novelty')
+    user.value.specials = badgeData.filter((b) => b.category === 'special')
+  } catch (err) {
+    console.error('❌ Erreur chargement profil :', err)
+  }
+})
 </script>
 
 <style scoped>
@@ -161,7 +175,6 @@ const specials = computed(() => user.value.specials)
   color: #000;
 }
 
-/* Progress bar */
 .progress-bar {
   display: flex;
   align-items: center;
