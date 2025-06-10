@@ -3,6 +3,7 @@ body {
   color: var(--color-black);
   font-weight: var(--font-regular);
   line-height: 1.5;
+  font-size: var(--font-size-standard);
 }
 
 h1,
@@ -28,7 +29,7 @@ h3,
 
 p,
 .text-body {
-  font-size: 1rem;
+  font-size: var(--font-size-standard);
   font-weight: var(--font-regular);
   color: var(--color-black);
 }

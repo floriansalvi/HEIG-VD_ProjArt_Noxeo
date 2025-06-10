@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'CustomFont';
+  src: url('/fonts/italian_plate_no2/ItalianPlateNo2-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --color-yellow: #ffc72c;
   --color-blue: #072c54;
@@ -5,7 +13,8 @@
   --color-white: #ffffff;
   --color-gray: #76787b;
 
-  --font-family-main: 'Italian Plate No2', sans-serif;
+  /* --font-family-main: 'Italian Plate No2', sans-serif; */
+  --font-family-main: 'CustomFont', sans-serif;
 
   --font-ultralight: 100;
   --font-light: 300;
@@ -13,6 +22,8 @@
   --font-medium: 500;
   --font-demibold: 600;
   --font-bold: 700;
+
+  --font-size-standard: 18px;
 
   --space-xs: 4px;
   --space-sm: 8px;

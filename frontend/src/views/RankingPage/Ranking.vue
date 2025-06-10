@@ -15,6 +15,7 @@ const ranking = ref([])
 const currentUser = ref(auth.user)
 const menuVisible = ref(false)
 const showInfo = ref(false)
+const marketName = ref('')
 
 const toggleMenu = () => (menuVisible.value = !menuVisible.value)
 
@@ -26,16 +27,16 @@ async function fetchRanking(type) {
 
     const data = response.data.data.ranking || response.data.data
 
+    marketName.value = response.data.data.ranking[0].market_name
+
     const transformed = data.map((user, index) =>({
       id: user.user_id,
       name: user.nickname,
-      points: Number(user.total_score) + 2000000,
+      points: Number(user.total_score),
       rank: index + 1
     }))
 
     ranking.value = transformed
-
-    console.log('auth.user.value:', auth.user.value)
 
     const userInRanking = transformed.find(u => u.id === auth.user.value.id)
     if(userInRanking) {
@@ -63,7 +64,7 @@ onMounted(() => {
     <main class="ranking-main">
       <div class="ranking-header">
         <h1>
-          {{ currentTab === 'world' ? 'World ranking' : 'Market ranking' }}
+          {{ currentTab === 'world' ? 'World ranking' : `${marketName} ranking` }}
         </h1>
         <img
           :src="infoIcon"
@@ -148,7 +149,7 @@ onMounted(() => {
   position: sticky;
   top: 80px;
   background: white;
-  z-index: 10;
+  z-index: 5;
   padding: 16px;
   display: flex;
   justify-content: space-between;
@@ -174,7 +175,7 @@ onMounted(() => {
   top: 14rem; /* ajuste selon ton layout exact */
   left: 50%;
   transform: translateX(-50%);
-  z-index: 20;
+  z-index: 5;
   background: #fff;
   border: 1px solid black;
   padding: 10px 14px;
