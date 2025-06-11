@@ -18,6 +18,7 @@ class ModuleController extends Controller
     public function showLearningByModuleId (int $moduleId): JsonResponse {
 
         $module = Module::with([
+            'category',
             'learningBlocks' => function($query) {
                 $query->orderBy('index');
             },

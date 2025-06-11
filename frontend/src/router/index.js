@@ -6,14 +6,14 @@ import RegisterStep1 from '@/views/auth/RegisterStep1.vue'
 import RegisterStep2 from '@/views/auth/RegisterStep2.vue'
 import LearningPath from '@/views/LearningPathPage/LearningPath.vue'
 import Learning from '@/views/LearningPage/Learning.vue'
-import Onboarding from '@/views/LearningPage/LearningCategory/Onboarding.vue'
-import Discovery from '@/views/LearningPage/LearningCategory/Discovery.vue'
-import Novelties from '@/views/LearningPage/LearningCategory/Novelties.vue'
+import LearningCategory from '@/views/LearningPage/LearningCategory.vue'
 import Terms from '@/views/static/Terms.vue'
 import Privacy from '@/views/static/Privacy.vue'
 import Ranking from '@/views/RankingPage/Ranking.vue'
 import Profile from '@/views/ProfilePage/Profile.vue'
 import Settings from '@/views/SettingsPage/Settings.vue'
+import LearningModule from '@/views/LearningPage/LearningModule.vue'
+import Error404 from '@/views/Error404.vue'
 
 const routes = [
   {
@@ -53,22 +53,18 @@ const routes = [
     meta: { requiresAuth: true, requiresVerifiedEmail: true }
   },
   {
-    path: '/learning/onboarding',
-    name: 'onboarding',
-    component: Onboarding,
-    meta: { requiresAuth: true, requiresVerifiedEmail: true }
+    path: '/learning/:id',
+    name: 'LearningCategory',
+    component: LearningCategory,
+    meta: { requiresAuth: true, requiresVerifiedEmail: true },
+    props: true
   },
   {
-    path: '/learning/discovery',
-    name: 'discovery',
-    component: Discovery,
-    meta: { requiresAuth: true, requiresVerifiedEmail: true }
-  },
-  {
-    path: '/learning/novelties',
-    name: 'novelties',
-    component: Novelties,
-    meta: { requiresAuth: true, requiresVerifiedEmail: true }
+    path: '/learning/module/:id',
+    name: 'ModuleDetail',
+    component: LearningModule,
+    meta: { requiresAuth: true, requiresVerifiedEmail: true },
+    props: true
   },
   {
     path: '/terms',
@@ -98,6 +94,11 @@ const routes = [
     component: Settings,
     meta: { requiresAuth: true, requiresVerifiedEmail: true }
   },
+  {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        component : Error404
+  }
 ];
 
 const router = createRouter({

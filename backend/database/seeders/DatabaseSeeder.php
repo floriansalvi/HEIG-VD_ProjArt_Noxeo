@@ -19,7 +19,13 @@ class DatabaseSeeder extends Seeder
             MarketSeeder::class,
             StoreSeeder::class,
             RegistrationKeySeeder::class,
-            UserSeeder::class
+            UserSeeder::class,
+            CategorySeeder::class,
+            ModuleSeeder::class,
+            TextBlockSeeder::class,
+            VideoBlockSeeder::class,
+            ImageBlockSeeder::class,
+            LearningBlockSeeder::class
         ]);
     }
 }

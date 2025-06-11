@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->enum('title', ['On Boarding', 'Discovery', 'Novelties', 'Specials']);
+            $table->enum('title', ['Onboarding', 'Discovery', 'Novelties', 'Specials']);
             $table->timestamps();
         });
     }
