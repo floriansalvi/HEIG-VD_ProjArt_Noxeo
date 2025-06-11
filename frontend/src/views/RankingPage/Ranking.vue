@@ -237,7 +237,7 @@ onMounted(() => {
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: ease-in-out 0.2s;
 }
 
 .tab-toggle button.active {

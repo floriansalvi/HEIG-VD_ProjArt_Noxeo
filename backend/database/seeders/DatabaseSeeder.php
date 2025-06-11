@@ -25,7 +25,8 @@ class DatabaseSeeder extends Seeder
             TextBlockSeeder::class,
             VideoBlockSeeder::class,
             ImageBlockSeeder::class,
-            LearningBlockSeeder::class
+            LearningBlockSeeder::class,
+            TestDataSeeder::class
         ]);
     }
 }

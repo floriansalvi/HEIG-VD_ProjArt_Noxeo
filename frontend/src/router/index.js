@@ -14,6 +14,7 @@ import Profile from '@/views/ProfilePage/Profile.vue'
 import Settings from '@/views/SettingsPage/Settings.vue'
 import LearningModule from '@/views/LearningPage/LearningModule.vue'
 import Error404 from '@/views/Error404.vue'
+import Test from '@/views/Test/Test.vue'
 
 const routes = [
   {
@@ -63,6 +64,13 @@ const routes = [
     path: '/learning/module/:id',
     name: 'ModuleDetail',
     component: LearningModule,
+    meta: { requiresAuth: true, requiresVerifiedEmail: true },
+    props: true
+  },
+  {
+    path: '/test/:testId',
+    name: 'Test',
+    component: Test,
     meta: { requiresAuth: true, requiresVerifiedEmail: true },
     props: true
   },

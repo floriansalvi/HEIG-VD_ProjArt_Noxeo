@@ -18,6 +18,7 @@ class TestController extends Controller
     public function show(int $testId): JsonResponse
     {
         $test = Test::with([
+            'step',
             'testQuestions' => function ($query) {
                 $query->orderBy('index');
             },

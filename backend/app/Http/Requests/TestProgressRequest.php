@@ -23,6 +23,7 @@ class TestProgressRequest extends FormRequest
     {
         return [
             'step_id' => 'required|exists:steps,id',
+            'test_id' => 'required|exists:tests,id',
             'attempt_date' => 'required|date|date_equals:today',
             'score' => 'required|integer|min:0',
             'time_bonus' => 'required|integer|min:0',
@@ -35,6 +36,8 @@ class TestProgressRequest extends FormRequest
         return [
             'step_id.required' => 'The step id is required.',
             'step_id.exists' => 'The selected step id is invalid.',
+            'test_id.required' => 'The test id is required.',
+            'test_id.exists' => 'The selected test id is invalid.',
             'attempt_date.required' => 'The attempt date is required.',
             'attempt_date.date' => 'The attempt date must be a date.',
             'attempt_date.date_equals' => 'The attempt date must be today.',
