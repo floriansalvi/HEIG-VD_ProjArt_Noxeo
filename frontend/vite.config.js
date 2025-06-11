@@ -9,7 +9,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-<<<<<<< HEAD
     },
   },
   server: {
@@ -19,9 +18,7 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
-=======
-      '@assets': fileURLToPath(new URL('./src/assets', import.meta.url))
->>>>>>> 27774ee6459f8e21fed6edcbf668f1079170e724
+      '@assets': fileURLToPath(new URL('./src/assets', import.meta.url)),
     },
   },
 })
