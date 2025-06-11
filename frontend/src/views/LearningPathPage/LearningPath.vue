@@ -11,7 +11,6 @@
 
       <div class="module-block">
         <div class="arc-wrapper">
-          <!-- Background image as cadran -->
           <!-- Arc radial -->
           <svg viewBox="0 0 200 200" class="arc-svg">
             <g>
@@ -123,6 +122,35 @@ function handleScroll(e) {
   min-height: 100vh;
   overflow: hidden;
   position: relative;
+  z-index: 0;
+}
+
+.learning-path::before {
+  content: '';
+  position: absolute;
+  top: 4rem;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('@/assets/breitling_store.png');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.4;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.learning-path::after {
+  content: '';
+  position: absolute;
+  top: 4rem;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  opacity: 0.4;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .scroller {
@@ -131,25 +159,29 @@ function handleScroll(e) {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  z-index: 2;
 }
 
 .learning-header {
   text-align: left;
   width: 100%;
   max-width: 300px;
-  padding: 20px;
+  padding: 30px;
 }
 
 .learning-header h1 {
   font-size: 1.5rem;
   font-weight: bold;
   color: #000;
+  margin-left: -1rem;
 }
 
 .learning-header p {
   font-size: 0.9rem;
   color: #555;
-  margin-top: 0.2rem;
+  margin-top: -1rem;
+  margin-left: -1rem;
 }
 
 .module-block {
@@ -167,7 +199,7 @@ function handleScroll(e) {
   position: relative;
   width: 100%;
   height: 100%;
-  z-index: 1;
+  z-index: 3;
 }
 
 .arc-wrapper::before {
@@ -178,7 +210,7 @@ function handleScroll(e) {
   left: -135px;
   width: 460px;
   height: 420px;
-  background-image: url('@/assets/cadran.jpg'); /* change path if needed */
+  background-image: url('@/assets/cadran.png'); /* ← image cadran détourée */
   background-size: cover;
   background-position: center;
   z-index: 0;

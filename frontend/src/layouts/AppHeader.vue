@@ -1,28 +1,32 @@
 <template>
   <header class="app-header">
     <div class="header-content">
-      <div class="brand">
-        <img src="@/assets/logo-b.png" alt="B logo" class="logo-b" />
-        <span class="text">LEAGUE</span>
-        <span class="separator">|</span>
-        <img src="@/assets/ecusson-bleague.png" alt="Badge" class="badge" />
-      </div>
+      <!-- Rend tout le bloc cliquable -->
+      <router-link to="/learning-path" class="brand-link">
+        <div class="brand">
+          <img src="@/assets/logo-b.png" alt="B logo" class="logo-b" />
+          <span class="text">LEAGUE</span>
+          <span class="separator">|</span>
+          <img src="@/assets/ecusson-bleague.png" alt="Badge" class="badge" />
+        </div>
+      </router-link>
+
       <button class="menu-btn" @click="$emit('menu')">☰</button>
     </div>
   </header>
 </template>
 
 <script setup>
-// Évènement menu si besoin
+// rien à modifier ici
 </script>
 
 <style scoped>
 .app-header {
-  position: fixed; /* 👈 fixe le header en haut */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 20; /* 👈 toujours au-dessus du menu */
+  z-index: 20;
   background-color: #ffc72c;
   padding: 16px;
   display: flex;
@@ -35,12 +39,18 @@
   width: 100%;
   max-width: 900px;
   display: flex;
-  justify-content: center; /* 👈 centre horizontalement tout */
+  justify-content: center;
   align-items: center;
   position: relative;
 }
 
-/* Bloc centré */
+/* Le lien autour du logo */
+.brand-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Bloc cliquable */
 .brand {
   display: flex;
   align-items: center;
@@ -48,6 +58,7 @@
   font-weight: bold;
   font-size: 1.1rem;
   text-align: center;
+  cursor: pointer;
 }
 
 .logo-b {
