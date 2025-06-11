@@ -11,6 +11,7 @@
 
       <div class="module-block">
         <div class="arc-wrapper">
+          <!-- Background image as cadran -->
           <!-- Arc radial -->
           <svg viewBox="0 0 200 200" class="arc-svg">
             <g>
@@ -154,7 +155,8 @@ function handleScroll(e) {
 .module-block {
   position: relative;
   width: 100%;
-  height: 340px;
+  max-width: 420px;
+  min-height: 440px;
   margin-top: 20px;
   display: flex;
   flex-direction: column;
@@ -165,24 +167,42 @@ function handleScroll(e) {
   position: relative;
   width: 100%;
   height: 100%;
+  z-index: 1;
+}
+
+.arc-wrapper::before {
+  content: '';
+  clip-path: circle(50% at 50% 50%);
+  position: absolute;
+  top: -46px;
+  left: -135px;
+  width: 460px;
+  height: 420px;
+  background-image: url('@/assets/cadran.jpg'); /* change path if needed */
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .arc-svg {
   position: absolute;
-  left: -120px;
-  top: -40px;
-  width: 400px;
-  height: 400px;
+  left: -90px;
+  top: 0px;
+  width: 350px;
+  height: 320px;
   transform: rotate(-90deg);
+  z-index: 1;
 }
 
 .text-center-inside {
   position: absolute;
   top: 10rem;
-  left: 8rem;
-  transform: translate(-50%, -50%);
+  left: 6rem;
+  transform: translate(-45%, -50%);
   width: 180px;
   text-align: left;
+  z-index: 2;
 }
 
 .text-center-inside h2 {
@@ -206,11 +226,11 @@ function handleScroll(e) {
 }
 
 .start-btn-container {
-  width: 100%;
+  width: 80%;
   display: flex;
   justify-content: flex-end;
-  padding-right: 20px;
-  margin-top: 1rem;
+  padding: 0 1rem 1rem;
+  margin-top: auto;
 }
 
 .start-btn {
