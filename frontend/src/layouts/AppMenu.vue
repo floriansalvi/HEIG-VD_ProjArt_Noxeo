@@ -38,7 +38,6 @@ import { watch, onUnmounted } from 'vue'
 const props = defineProps({ show: Boolean })
 const emit = defineEmits(['close'])
 
-// Désactive le scroll quand le menu est visible
 watch(
   () => props.show,
   (visible) => {
@@ -52,7 +51,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Slide depuis le haut */
+/* Animation */
 .slide-down-enter-active,
 .slide-down-leave-active {
   transition: all 0.3s ease;
@@ -64,33 +63,37 @@ onUnmounted(() => {
   opacity: 0;
 }
 
-/* Menu sous le header */
+/* Nouveau style de menu */
 .menu-panel {
   position: fixed;
-  top: 110px; /* hauteur exacte du header */
+  top: 110px;
   left: 0;
   width: 100%;
-  background-color: rgb(219, 219, 219);
+
+  backdrop-filter: blur(12px);
+  background-color: rgba(255, 255, 255, 0.65);
   z-index: 100;
+  overflow-y: auto;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Menu list style */
+/* Style des liens */
 .menu-list {
   list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
 .menu-list li {
-  border-bottom: 1px solid #808080;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 16px;
   font-size: 1rem;
 }
 
 .menu-list a {
   text-decoration: none;
-  color: #222;
+  color: #111;
+  font-weight: 500;
   display: block;
 }
 </style>
