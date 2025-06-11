@@ -4,20 +4,17 @@
     <AppMenu :show="menuVisible" @close="menuVisible = false" />
 
     <main class="settings-main">
+      <div class="section-header">
+        <RouterLink to="/profile" class="retour">
+          &#8592;
+          <span>Return</span>
+        </RouterLink>
+      </div>
+
       <h1>Settings</h1>
 
-      <section>
-        <div class="section-header">
-          <RouterLink to="/profile" class="edit">
-            edit <span>&#9998;</span>
-          </RouterLink>
-        </div>
-        <ProfileForm v-model="form" />
-      </section>
-
-      <section>
-        <PasswordForm v-model="passwords" />
-      </section>
+      <ProfileForm v-model="form" />
+      <PasswordForm v-model="passwords" />
 
       <div class="actions">
         <button class="save-btn" @click="save">Save changes</button>
@@ -44,14 +41,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import { useRouter } from 'vue-router'
+import { useRouter, RouterLink } from 'vue-router'
 
 import AppHeader from '@/layouts/AppHeader.vue'
 import AppMenu from '@/layouts/AppMenu.vue'
 import ProfileForm from '@/components/settings/ProfileForm.vue'
 import PasswordForm from '@/components/settings/PasswordForm.vue'
 import DeleteConfirmModal from '@/components/settings/DeleteConfirmModal.vue'
-import { RouterLink } from 'vue-router'
 
 const router = useRouter()
 const menuVisible = ref(false)
@@ -74,7 +70,6 @@ const passwords = ref({
 
 const showDeleteModal = ref(false)
 
-// Récupère les données de l'utilisateur connecté
 onMounted(async () => {
   try {
     const { data } = await axios.get('/api/user', { withCredentials: true })
@@ -87,17 +82,17 @@ onMounted(async () => {
       avatar: data.avatar ?? '/assets/image.png',
     }
   } catch (err) {
-    console.error('❌ Erreur chargement user :', err)
+    console.error('❌ Failed to load user:', err)
   }
 })
 
 async function save() {
   try {
     await axios.put('/api/v1/user/update-profile', form.value)
-    alert('✅ Profil mis à jour')
+    alert('✅ Profile updated')
   } catch (err) {
-    console.error('❌ Erreur update-profile :', err)
-    alert('Échec de la mise à jour du profil')
+    console.error('❌ Failed to update profile:', err)
+    alert('Failed to update profile')
   }
 
   const { current, new: newPass, confirm } = passwords.value
@@ -107,27 +102,25 @@ async function save() {
         current_password: current,
         new_password: newPass,
       })
-      alert('✅ Mot de passe modifié')
+      alert('✅ Password changed')
       passwords.value = { current: '', new: '', confirm: '' }
     } catch (err) {
-      console.error('❌ Erreur update-password :', err)
-      alert('Échec du changement de mot de passe')
+      console.error('❌ Failed to change password:', err)
+      alert('Password change failed')
     }
   } else if (current || newPass || confirm) {
-    alert(
-      '⚠️ Tous les champs du mot de passe doivent être remplis et identiques'
-    )
+    alert('⚠️ All password fields must be filled and match')
   }
 }
 
 async function confirmDelete() {
   try {
     await axios.delete('/api/v1/user/delete')
-    alert('✅ Compte supprimé')
+    alert('✅ Account deleted')
     router.push('/login')
   } catch (err) {
-    console.error('❌ Erreur suppression compte :', err)
-    alert('Impossible de supprimer le compte')
+    console.error('❌ Failed to delete account:', err)
+    alert('Account deletion failed')
   } finally {
     showDeleteModal.value = false
   }
@@ -142,14 +135,15 @@ async function confirmDelete() {
 
 .section-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
 }
 
-.edit {
-  font-size: 0.9rem;
+.retour {
+  font-size: 0.95rem;
   color: #444;
   text-decoration: none;
+  margin-top: 2rem;
 }
 
 .actions {

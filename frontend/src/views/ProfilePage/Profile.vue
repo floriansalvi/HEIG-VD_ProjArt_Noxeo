@@ -103,20 +103,19 @@ const specials = computed(() => user.value.specials)
 
 onMounted(async () => {
   try {
-    // ✅ Récupère l'utilisateur connecté
     const { data: userData } = await axios.get('/api/user', {
       withCredentials: true,
     })
     user.value.name = `${userData.firstname} ${userData.surname}`
     user.value.avatar = userData.avatar || '/assets/image.png'
 
-    // ✅ Récupère le score total
-    const { data: scoreData } = await axios.get('/api/v1/user/score', {
+    const { data: leaderboardData } = await axios.get('/api/v1/leaderboard', {
       withCredentials: true,
     })
-    user.value.points = scoreData.total_score ?? 0
+    const leaderboard = leaderboardData.data.ranking || []
+    const me = leaderboard.find((u) => u.user_id === userData.id)
+    user.value.points = me ? Number(me.total_score) : 0
 
-    // ✅ Récupère les badges
     const { data: badgeData } = await axios.get('/api/v1/user/badges', {
       withCredentials: true,
     })

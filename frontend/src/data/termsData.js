@@ -1,7 +1,6 @@
 // src/data/privacyData.js
 export const termsSections = [
   {
-    title: 'Last updated: June 2022',
     paragraphs: [
       'The protection of your personal data (see definition § 2 below) is important to Breitling. The present privacy policy ("Privacy Policy") describes the way Breitling processes your personal data.',
       'This Privacy Policy applies to all entities of Breitling group, Breitling SA, its subsidiaries and its affiliated companies, its boutiques and its authorized retailers (“Breitling/ we/ us/ our”).',
