@@ -4,7 +4,7 @@ import axios from 'axios'
  * Create an axios client instance with default configuration.
  */
 const axiosClient = axios.create({
-  baseURL: 'https://bleague-noxeo.com',
+  baseURL: 'http://bleague-noxeo.com',
 
   withCredentials: true,
   headers: {
