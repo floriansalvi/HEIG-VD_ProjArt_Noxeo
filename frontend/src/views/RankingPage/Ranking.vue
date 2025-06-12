@@ -6,7 +6,7 @@ import infoIcon from '@/assets/icons/info.png'
 import { useRouter } from 'vue-router'
 import auth from '@/services/auth'
 
-const $http = inject('$http');
+const $http = inject('$http')
 
 const router = useRouter()
 
@@ -22,29 +22,29 @@ const toggleMenu = () => (menuVisible.value = !menuVisible.value)
 async function fetchRanking(type) {
   try {
     await $http.get('/sanctum/csrf-cookie')
-    const url = type === 'world' ? '/api/v1/leaderboard' : '/api/v1/leaderboard/market'
+    const url =
+      type === 'world' ? '/api/v1/leaderboard' : '/api/v1/leaderboard/market'
     const response = await $http.get(url)
 
     const data = response.data.data.ranking || response.data.data
 
     marketName.value = response.data.data.ranking[0].market_name
 
-    const transformed = data.map((user, index) =>({
+    const transformed = data.map((user, index) => ({
       id: user.user_id,
       name: user.nickname,
       points: Number(user.total_score),
-      rank: index + 1
+      rank: index + 1,
     }))
 
     ranking.value = transformed
 
-    const userInRanking = transformed.find(u => u.id === auth.user.value.id)
-    if(userInRanking) {
+    const userInRanking = transformed.find((u) => u.id === auth.user.value.id)
+    if (userInRanking) {
       currentUser.value = userInRanking
     } else {
       currentUser.value = null // ou garde auth.user si tu veux
     }
-
   } catch (err) {
     console.log(err)
   }
@@ -64,7 +64,9 @@ onMounted(() => {
     <main class="ranking-main">
       <div class="ranking-header">
         <h1>
-          {{ currentTab === 'world' ? 'World ranking' : `${marketName} ranking` }}
+          {{
+            currentTab === 'world' ? 'World ranking' : `${marketName} ranking`
+          }}
         </h1>
         <img
           :src="infoIcon"
@@ -168,6 +170,8 @@ onMounted(() => {
   flex: 1;
   overflow-y: auto;
   padding: 0 16px;
+  margin-top: 1rem;
+  margin-bottom: 11rem;
 }
 
 .user-highlight {
@@ -176,15 +180,15 @@ onMounted(() => {
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
-  background: #fff;
-  border: 1px solid black;
-  padding: 10px 14px;
+  background: #fffef0;
+  border: 2px solid #000000;
+  padding: 0.6rem 1rem;
   font-weight: bold;
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 90%;
-  max-width: 320px;
+  max-width: 20rem;
 }
 
 .ranking-list {
