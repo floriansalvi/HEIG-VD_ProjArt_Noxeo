@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\v1\ModuleController;
 use App\Http\Controllers\Api\v1\StepController;
 use App\Http\Controllers\Api\v1\TestController;
 use App\Http\Controllers\Api\v1\TestProgressController;
-use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\v1\UserController;
 use App\Http\Controllers\Api\v1\UserTotalScoreController;
 use App\Http\Controllers\Api\v1\BadgeController;
 use App\Http\Controllers\Api\v1\VerificationController;
