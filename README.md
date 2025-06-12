@@ -172,11 +172,18 @@ chmod +x setup.sh
 - Back-end : [http://localhost:8000](http://localhost:8000)
 - Front-end : [http://localhost:5173](http://localhost:5173)
 - Mailhog : [http://localhost:8025](http://localhost:8025)
-- MySQL
 
 Le port utilisé par l'application front-end peut être adapté mais, cela doit être fait manuellement dans les fichiers `/backend/config/cors.php` et `/backend/.env`
 
 ### Account
+
+Voici les informations d'identification d'un compte déjà créé.'.
+
+```
+Pseudo : floflo
+Email : florian.salvi@heig-vd.ch
+Mot de passe : Heig2025
+```
 
 ---
 
@@ -187,6 +194,9 @@ Le port utilisé par l'application front-end peut être adapté mais, cela doit 
 | Méthode | URI                              | Description                                    |
 | ------: | :------------------------------- | :--------------------------------------------- |
 |     GET | `/api/v1/registration-key/{key}` | Vérifie la validité d’une clé d’enregistrement |
+|    POST | `/login`                         | Connexion d’un utilisateur                     |
+|    POST | `/register`                      | Inscription d’un utilisateur                   |
+|    POST | `/logout`                        | Déconnexion de l’utilisateur                   |
 
 2. Les route privées
 

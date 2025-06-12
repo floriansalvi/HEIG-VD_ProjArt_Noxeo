@@ -5,6 +5,7 @@ import axios from 'axios'
  */
 const axiosClient = axios.create({
   baseURL: 'https://bleague-noxeo.com',
+//   baseURL: 'http://localhost:8000',
 
   withCredentials: true,
   headers: {
