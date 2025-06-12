@@ -127,7 +127,6 @@ const handleLogin = async () => {
   font-size: 1rem;
   border: 1px solid black;
   font-family: var(--font-family-main);
-  border-radius: 4px;
   box-sizing: border-box;
 }
 
@@ -167,7 +166,6 @@ const handleLogin = async () => {
   font-size: 1rem;
   font-family: var(--font-family-main);
   border: none;
-  border-radius: 6px;
   cursor: pointer;
 }
 

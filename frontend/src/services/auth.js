@@ -46,6 +46,7 @@ async function registerUser(data) {
  * @returns {Promise<void>}
  */
 async function logout() {
+    await axiosClient.get('/sanctum/csrf-cookie')
     await axiosClient.post('/logout');
     user.value = null;
     isAuthenticated.value = false;

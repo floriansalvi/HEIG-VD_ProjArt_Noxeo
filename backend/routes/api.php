@@ -78,6 +78,9 @@ Route::prefix('v1')->group(function() {
         Route::get('/tests/{testId}', [TestController::class, 'show']);
 
 
+        // Get all steps in their modules that are in their categories
+        Route::get('/steps', [StepController::class, 'index']);
+
         // Get a step and its child
         Route::get('/steps/{stepId}', [StepController::class, 'show']);
 

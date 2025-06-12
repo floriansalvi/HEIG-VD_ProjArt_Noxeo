@@ -1,6 +1,20 @@
 #!/bin/bash
 set -e
 
+# Check tools
+command -v composer >/dev/null 2>&1 || { echo >&2 "❌ Composer is not installed. Aborting."; exit 1; }
+command -v npm >/dev/null 2>&1 || { echo >&2 "❌ NPM is not installed. Aborting."; exit 1; }
+
+# Install back-end dependencies
+echo "Installing back-end dependencies..."
+cd backend || exit
+composer install
+
+# Configure the .env file
+echo "Configuring the .env file..."
+cp .env.example .env
+php artisan key:generate
+
 # --- Start Mailhog ---
 echo "Checking Mailhog..."
 if ! pgrep -f "Mailhog" > /dev/null; then
@@ -20,16 +34,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         echo "MySQL is already running"
     fi
 fi
-
-# Install back-end dependencies
-echo "Installing back-end dependencies..."
-cd backend || exit
-composer install
-
-# Configure the .env file
-echo "Configuring the .env file..."
-cp .env.example .env
-php artisan key:generate
 
 # Run migrations and seeders
 echo "Running migrations and seeders..."

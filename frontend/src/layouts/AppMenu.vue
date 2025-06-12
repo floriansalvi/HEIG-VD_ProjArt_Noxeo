@@ -23,9 +23,10 @@
             >Settings</RouterLink
           >
         </li>
-        <li><RouterLink to="/help" @click="emit('close')">Help</RouterLink></li>
         <li>
-          <RouterLink to="/logout" @click="emit('close')">Log out</RouterLink>
+          <RouterLink to="/help" @click="emit('close')">Help</RouterLink></li>
+        <li>
+          <p @click="logout">Log out</p>
         </li>
       </ul>
     </div>
@@ -34,9 +35,18 @@
 
 <script setup>
 import { watch, onUnmounted } from 'vue'
+import auth from '@/services/auth'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const props = defineProps({ show: Boolean })
 const emit = defineEmits(['close'])
+
+const logout = async () => {
+  await auth.logout()
+  router.push('/')
+}
 
 watch(
   () => props.show,
@@ -88,6 +98,12 @@ onUnmounted(() => {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 16px;
   font-size: 1rem;
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+    cursor: pointer;
+  }
 }
 
 .menu-list a {
