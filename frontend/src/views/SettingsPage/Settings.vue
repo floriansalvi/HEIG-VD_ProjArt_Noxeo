@@ -45,9 +45,9 @@ import { useRouter, RouterLink } from 'vue-router'
 
 import AppHeader from '@/layouts/AppHeader.vue'
 import AppMenu from '@/layouts/AppMenu.vue'
-import ProfileForm from '@/components/settings/ProfileForm.vue'
-import PasswordForm from '@/components/settings/PasswordForm.vue'
-import DeleteConfirmModal from '@/components/settings/DeleteConfirmModal.vue'
+import ProfileForm from '@/components/Settings/ProfileForm.vue'
+import PasswordForm from '@/components/Settings/PasswordForm.vue'
+import DeleteConfirmModal from '@/components/Settings/DeleteConfirmModal.vue'
 
 const router = useRouter()
 const menuVisible = ref(false)
