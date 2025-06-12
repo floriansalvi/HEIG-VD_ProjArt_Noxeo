@@ -4,11 +4,12 @@ import axios from 'axios'
  * Create an axios client instance with default configuration.
  */
 const axiosClient = axios.create({
-    baseURL: 'http://localhost:8000',
-    withCredentials: true,
-    headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-    },
+  baseURL: 'https://bleague-noxeo.com',
+
+  withCredentials: true,
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+  },
 })
 
 /**
@@ -17,16 +18,16 @@ const axiosClient = axios.create({
  * @returns {import('axios').AxiosRequestConfig} The modified Axios request configuration.
  */
 axiosClient.interceptors.request.use((config) => {
-    const xsrfToken = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('XSRF-TOKEN='))
-      ?.split('=')[1]
-  
-    if (xsrfToken) {
-      config.headers['X-XSRF-TOKEN'] = decodeURIComponent(xsrfToken)
-    }
-  
-    return config
-  })
-  
-  export default axiosClient
+  const xsrfToken = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('XSRF-TOKEN='))
+    ?.split('=')[1]
+
+  if (xsrfToken) {
+    config.headers['X-XSRF-TOKEN'] = decodeURIComponent(xsrfToken)
+  }
+
+  return config
+})
+
+export default axiosClient
