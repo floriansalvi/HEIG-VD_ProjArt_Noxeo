@@ -60,7 +60,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <h1 v-if="key">{{ key }}</h1>
   <div class="register-page">
     <div class="register-header">
       <img
@@ -171,7 +170,6 @@ onMounted(() => {
   font-size: 1rem;
   border: 1px solid black;
   font-family: var(--font-family-main);
-  border-radius: 4px;
   box-sizing: border-box;
 }
 
@@ -213,7 +211,6 @@ onMounted(() => {
   font-size: 1rem;
   font-family: var(--font-family-main);
   border: none;
-  border-radius: 6px;
   cursor: pointer;
 }
 

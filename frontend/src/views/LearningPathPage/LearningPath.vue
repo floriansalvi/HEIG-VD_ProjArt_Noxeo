@@ -9,7 +9,7 @@
         <p>scroll your path !</p>
       </div>
 
-      <div class="module-block">
+      <div class="module-block" v-if="modules.length">
         <div class="arc-wrapper">
           <!-- Arc radial -->
           <svg viewBox="0 0 200 200" class="arc-svg">
@@ -33,7 +33,7 @@
           <div class="text-center-inside">
             <h2>{{ currentModule.title }}</h2>
             <p class="meta">
-              Onboarding {{ currentModule.points.toLocaleString() }}PTS
+              Onboarding {{ (currentModule.points || 0).toLocaleString() }} PTS
             </p>
             <p class="desc">{{ currentModule.description }}</p>
           </div>
@@ -41,45 +41,40 @@
 
         <!-- Bouton en bas à droite -->
         <div class="start-btn-container">
-          <button class="start-btn">start {{ currentModule.type }}</button>
+          <button
+            @click="startStep"
+            class="start-btn"
+          >
+            Start {{ currentModule.type.toLowerCase() }}
+          </button>
         </div>
       </div>
+
+      <div v-else class="loading-text">Loading modules...</div>
     </div>
   </div>
 </template>
 
+
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, inject } from 'vue'
 import AppHeader from '@/layouts/AppHeader.vue'
 import AppMenu from '@/layouts/AppMenu.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const $http = inject('$http');
 
 const menuVisible = ref(false)
 const toggleMenu = () => (menuVisible.value = !menuVisible.value)
 
-const modules = ref([
-  {
-    title: 'History',
-    type: 'lesson',
-    points: 10000,
-    description: 'Discover the rich history of Breitling from 1884 to now.',
-  },
-  {
-    title: 'Test history',
-    type: 'test',
-    points: 10000,
-    description:
-      'Test your understanding of Breitling’s heritage from 1884 to its major innovations.',
-  },
-  {
-    title: 'Innovation',
-    type: 'lesson',
-    points: 8000,
-    description: 'Explore Breitling’s key innovations in watchmaking.',
-  },
-])
-
+const modules = ref([])  // modules récupérés de l'API
 const activeIndex = ref(0)
-const currentModule = computed(() => modules.value[activeIndex.value])
+
+const currentModule = computed(() => {
+  if (modules.value.length === 0) return { title: '', description: '', points: 0, type: '' }
+  return modules.value[activeIndex.value]
+})
 
 const tickCount = 40
 
@@ -98,6 +93,25 @@ const tickColor = (i) => {
   return '#ddd'
 }
 
+const startStep = () => {
+
+  const type = (currentModule.value?.type || '').toLowerCase()
+  const firstStep = currentModule.value?.steps?.[0]
+
+  if (!firstStep) {
+    console.warn('No implemented')
+    return
+  }
+
+  const stepId = firstStep.id
+
+  if (type === 'test') {
+    router.push(`/test/${stepId}`)
+  } else {
+    console.warn('No implemented')
+  }
+}
+
 let scrollCooldown = false
 function handleScroll(e) {
   if (scrollCooldown) return
@@ -114,7 +128,50 @@ function handleScroll(e) {
     scrollCooldown = false
   }, 500)
 }
+
+const fetchSteps = async () => {
+  try {
+    await $http.get('/sanctum/csrf-cookie') // si nécessaire
+    const response = await $http.get('api/v1/steps') // ta route Laravel
+
+    // Exemple de structure attendue : 
+    // response.data.data = [
+    //   { modules: [ { title, description, steps: [{ total_points }] ... } ] }
+    // ]
+
+    // On aplatie ici pour récupérer tous les modules de toutes les catégories en un seul tableau
+    const categories = response.data.data
+
+    // Extraire tous les modules dans un tableau à plat
+    const allModules = categories.flatMap(category => {
+  return category.modules.map(module => {
+    // calculer le total des points sur le module (somme des total_points des steps)
+    const modulePoints = module.steps.reduce((acc, step) => acc + (step.total_points || 0), 0)
+
+    // prendre le type de la première step ou 'lesson' par défaut
+    const stepType = module.steps.length > 0 ? module.steps[0].type : 'lesson'
+
+    return {
+      id: module.id,
+      title: module.title,
+      description: module.description,
+      type: stepType,
+      points: modulePoints,
+      steps: module.steps,
+    }
+  })
+})
+
+    modules.value = allModules
+
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+onMounted(fetchSteps)
 </script>
+
 
 <style scoped>
 .learning-path {
