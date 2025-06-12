@@ -7,6 +7,8 @@ import auth from '@/services/auth'
 
 const $http = inject('$http');
 
+const router = useRouter() 
+
 const props = defineProps({
     testId: String
 })
@@ -14,6 +16,7 @@ const props = defineProps({
 const started = ref(false)
 const finished = ref(false)
 const loading = ref(false)
+const submitting = ref(false)
 const currentIndex = ref(0)
 const score = ref(0)
 const bonusTime = ref(0)
@@ -25,7 +28,12 @@ const timer = ref(0)
 const maxTime = ref(0)
 const intervalId = ref(null)
 const stepId = ref(null)
-const questionText = ref('')
+const moduleTitle = ref('')
+
+const canStartTest = ref(false);
+const alreadyAttemptedToday = ref(false);
+const alreadySucceeded = ref(false);
+const errMessage = ref('')
 
 const test = reactive({
     questions: []
@@ -36,12 +44,42 @@ function toggleMenu() {
   menuVisible.value = !menuVisible.value
 }
 
+const checkTestProgress = async () => {
+    try {
+        const response = await $http.get(`api/v1/test-progress/${props.testId}`)
+
+        const today = new Date().toISOString().split('T')[0]
+
+        const attempt = response.data.data || {}
+
+        alreadySucceeded.value = !!attempt.is_successful
+        alreadyAttemptedToday.value = attempt.attempt_date ? attempt.attempt_date.startsWith(today) : false
+
+        if (alreadySucceeded.value) {
+            errMessage.value = "This test is already succeeded."
+            canStartTest.value = false
+        } else if (alreadyAttemptedToday.value) {
+            errMessage.value = "Daily attempt already used. Please try again tomorrow."
+            canStartTest.value = false
+        } else {
+            canStartTest.value = true
+        }
+
+
+    } catch (err) {
+        console.error(err);
+        canStartTest.value = true
+    }
+}
+
 const fetchTest = async () => {
     loading.value = true
     try {
         await $http.get('/sanctum/csrf-cookie')
+        await checkTestProgress()
         const response = await $http.get(`api/v1/tests/${props.testId}`)
-        
+
+        moduleTitle.value = response.data.data.step.module.title
         test.questions = response.data.data.test_questions
         stepId.value = response.data.data.step.id
         maxTime.value = response.data.data.step.max_time
@@ -51,6 +89,7 @@ const fetchTest = async () => {
 
     } catch (err) {
         console.log(err.message)
+        await router.push('/error')
     }
 }
 
@@ -66,6 +105,9 @@ const startTest = () => {
 }
 
 const answer = (choice) => {
+    
+    submitting.value = true
+
     if (feedback.value) return
 
     selectedChoiceId.value = choice.id
@@ -81,8 +123,9 @@ const answer = (choice) => {
     setTimeout(() => {
         feedback.value = null
         selectedChoiceId.value = null
+        submitting.value = false
         nextQuestion()
-    }, 3000);
+    }, 1000);
 }
 
 const nextQuestion = () => {
@@ -102,9 +145,9 @@ const finishTest = async () => {
     if (success) {
         bonusTime.value = Math.floor((timer.value / maxTime.value) * score.value)
         totalScore.value = score.value + bonusTime.value
-        result.value = 'Success'
+        result.value = 'Test validated'
     } else {
-        result.value = 'Missed'
+        result.value = 'Test failed'
     }
 
     try {
@@ -115,7 +158,7 @@ const finishTest = async () => {
         'attempt_date': new Date().toISOString().split('T')[0],
         'score': score.value,
         'time_bonus': bonusTime.value,
-        'is_successful': result.value === 'Success',
+        'is_successful': result.value === 'Test validated',
     })
 
     finished.value = true
@@ -130,6 +173,14 @@ const finishTest = async () => {
     }
 }
 
+const nextStep = () => {
+    router.push('/')
+}
+
+const backToPath = () => {
+    router.push('/learning-path')
+}
+
 onMounted(fetchTest)
 
 </script>
@@ -139,15 +190,37 @@ onMounted(fetchTest)
         <AppHeader @menu="toggleMenu" />
         <AppMenu :show="menuVisible" />
         <main v-if="!loading" class="test-page-main">
-            <p v-if="started && !finished">{{ timer }}s</p>
             <div class="test-content">
-                <h2 v-if="!started">Test</h2>
-                <h2 v-if="started">Question {{ currentIndex + 1 }}</h2>
-                <button v-if="!started" @click="startTest" class="start-btn">Start</button>
+                <h1
+                v-if="!finished"
+                :class="{'start-title': started === false && finished === false}"
+                >{{'Test - ' + moduleTitle}}</h1>
+                <div v-if="started && !finished" class="timing">
+                    <div class="progress-bar">
+                        <div 
+                            v-for="(q, index) in test.questions.length"
+                            :key="index"
+                            class="segment"
+                            :class="{ filled: index < currentIndex }"
+                        >
+                        </div>
+                    </div>
+                    <p>{{ Math.floor(timer / 60) }}:{{ (timer % 60).toString().padStart(2, '0') }}</p>
+                    <img :src="'/img/hourglass.svg'" alt="hourglass" class="hourglass-icon">
+                </div>
+            
+                <p v-if="started && !finished">Choose the correct answer</p>
+                <p v-if="!canStartTest" class="msg-error">{{ errMessage }}</p>
+                <h2 v-if="started && !finished">{{ currentIndex + 1 }}. {{ test.questions[currentIndex].content }}</h2>
+                <button
+                    v-if="!started"
+                    @click="canStartTest ? startTest() : backToPath()"
+                    class="start-btn"
+                >
+                    {{ canStartTest ? 'Start' : 'Back to the path'}}
+                </button>
 
                 <div v-if="started && !finished">
-                    <p>{{ test.questions[currentIndex].content }}</p>
-
                     <div class="choices">
                         <div
                             v-for="choice in test.questions[currentIndex].choices"
@@ -155,7 +228,9 @@ onMounted(fetchTest)
                             class="choice"
                             :class="{
                                 correct: feedback === 'correct' && choice.is_correct,
-                                wrong: feedback === 'wrong' && choice.id === selectedChoiceId
+                                'correct-border': feedback === 'wrong' && choice.is_correct,
+                                wrong: feedback === 'wrong' && choice.id === selectedChoiceId,
+                                disabled: submitting
                             }"
                             @click="answer(choice)"
                         >
@@ -164,11 +239,36 @@ onMounted(fetchTest)
                         </div>
                     </div>
                 </div>
-                <div v-if="finished">
-                    <h2>{{ result }}</h2>
-                    <p>Score : {{ score }} PTS</p>
-                    <p>Time bonus : {{ bonusTime }} PTS</p>
-                    <p>Total : {{ totalScore }} PTS</p>
+                <div v-if="finished" class="finished">
+                    <h1>{{ result }}</h1>
+
+                    <div class="score-section">
+                        <div class="score-card">
+                            <p>{{ score }} PTS</p>
+                            <span>earnt</span>
+                        </div>
+                        <div class="score-card">
+                            <p>{{ bonusTime }} PTS</p>
+                            <span>time bonus</span>
+                        </div>
+                    </div>
+                    <p class="total-score">Total : {{ totalScore }} PTS</p>
+                    <div class="btn-div">
+                        <button
+                            class="back-path-btn"
+                            @click="backToPath"
+                        >
+                            Back to the path
+                        </button>
+                        <button
+                            v-if="result === 'Test validated'"
+                            class="start-btn"
+                            @click="nextStep"
+                        >
+                        Next
+                        </button>
+                        
+                    </div>
                 </div>
             </div>
         </main>
@@ -176,6 +276,35 @@ onMounted(fetchTest)
 </template>
 
 <style scoped>
+
+.score-section {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+}
+
+.score-card {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    p {
+        font-size: 24px;
+        line-height: normal;
+    }
+
+    span {
+        opacity: 75%;
+        font-size: 16px;
+        line-height: normal;
+    }
+}
+
+.total-score {
+    font-size: 24px;
+}
+
 .test-page {
     display: flex;
     align-items: center;
@@ -186,29 +315,36 @@ onMounted(fetchTest)
 }
 
 .test-page-main {
-  padding: 24px 16px;
+    width: 100%;
+    max-width: 100vw;
+    padding: 24px 16px;
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 
 main {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px;
-    background-color: #fafafa;
-}
-
-.test-content {
-    width: 50vw;
-    min-width: 300px;
+    width: fit-content;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 12px;
+}
+
+.test-content {
+    width: 100%;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+}
+
+button {
+    width: 100%;
 }
 
 .start-btn {
-    width: 50%;
-    max-width: 320px;
     flex: 1;
     padding: 12px 0;
     background-color: var(--color-black);
@@ -218,10 +354,205 @@ main {
     font-weight: bold;
     cursor: pointer;
     transition: ease-in-out 0.2s;
+    margin: 0 auto;
+}
+
+.back-path-btn {
+    box-sizing: border-box;
+    flex: 1;
+    padding: 12px 0;
+    background-color: transparent;
+    color: var(--color-black);
+    border: 1px solid var(--color-black);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: ease-in-out 0.2s;
+    margin: 0 auto;
+}
+
+.back-path-btn:hover {
+    border: 1px solid var(--color-yellow);
+}
+
+.btn-div {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .start-btn:hover {
    background-color: var(--color-yellow); 
 }
 
+.choices {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.choice {
+    width: 100%;
+    border: 1px solid var(--color-black);
+    box-sizing: border-box; /* AJOUTÉ pour inclure bordure dans la largeur */
+    cursor: pointer; /* optionnel, pour montrer que c’est cliquable */
+    padding: 12px; /* optionnel, pour un peu d’espace interne */
+    display: flex;
+    align-items: center;
+    gap: 8px; /* espace entre image et texte */
+}
+
+.choice:hover {
+    border: 1px solid var(--color-yellow);
+}
+
+.correct {
+    border: 1px solid #a9dca5;
+    background-color: #a9dca5;
+}
+
+.wrong {
+    border: 1px solid #e2807d;
+    background-color: #e2807d;
+}
+
+.correct-border {
+  border: 2px solid #a9dca5;
+}
+
+.choice.disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+
+    &:hover {
+        border: 1px solid var(--color-black);
+    }
+}
+
+.timer-progress {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.progress-bar {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: 3px;
+  gap: 6px;
+  margin-top: 0;      
+  margin-bottom: 0;
+  align-self: center;
+}
+
+.segment {
+  flex: 1;
+  background-color: #e0e0e0;
+  transition: background-color 0.3s;
+}
+
+.segment.filled {
+  background-color: var(--color-yellow); /* ou une autre couleur */
+}
+
+.timing {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.timing p, p {
+    margin: 0;
+}
+
+.hourglass-icon {
+  height: 18px;
+  width: auto;
+  animation: flipHourglass 2s linear infinite;
+}
+
+@keyframes flipHourglass {
+  0%, 33.333% {
+    transform: rotate(0deg);
+  }
+  66.666% {
+    transform: rotate(180deg);
+  }
+  99.999% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+h1 {
+    margin: 0;
+}
+
+.start-title {
+    margin: 16px auto;
+}
+
+.finished {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* centre tous les enfants horizontalement */
+  justify-content: center;
+  gap: 24px; /* un peu d’espace entre les éléments */
+  text-align: center; /* utile pour centrer le texte comme le titre ou le score */
+}
+
+.finished h1,
+.finished .total-score,
+.finished .score-section {
+  width: 100%;
+  max-width: 320px;
+}
+
+.finished .score-section {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  justify-content: center; /* centre les cartes de score */
+}
+
+.finished .score-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.finished .btn-div {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.finished .btn-div button {
+  width: 100%;
+}
+
+.msg-error {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  button {
+    width: 50%;
+    max-width: 320px;
+  }
+
+  .test-page-main {
+    max-width: 50vw;
+  }
+}
 </style>

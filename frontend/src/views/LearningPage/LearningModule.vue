@@ -108,7 +108,7 @@ onMounted(() => {
 }
 
 .block-media {
-  width: 48%;
+  width: 100%;
   height: fit-auto;
   max-width: 100%;
   display: block;
@@ -122,6 +122,10 @@ a {
 @media (min-width: 768px) {
   .tiles {
     grid-template-columns: 1fr 1fr; /* 2 colonnes égales */
+  }
+
+  .block-media {
+    width: 48%;
   }
   
   .tile {

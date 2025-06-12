@@ -36,7 +36,7 @@ class TestDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        $question = TestQuestion::insert([
+        $question1 = TestQuestion::insert([
             'id' => 1,
             'test_id' => 1,
             'index' => 0,
@@ -109,6 +109,166 @@ class TestDataSeeder extends Seeder
             'test_question_id' => 1,
             'is_correct' => false,
             'choiceable_id' => 4,
+            'choiceable_type' => TextChoice::class,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // 
+
+        $question2 = TestQuestion::insert([
+            'id' => 2,
+            'test_id' => 1,
+            'index' => 1,
+            'content' => 'Where was the Breitling compagny founded ?',
+            'points_awarded' => 1000,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $textChoice5 = TextChoice::insert([
+            'id' => 5,
+            'content' => 'Geneva',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $textChoice6 = TextChoice::insert([
+            'id' => 6,
+            'content' => 'La Chaux-de-Fonds',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $textChoice7 = TextChoice::insert([
+            'id' => 7,
+            'content' => 'Saint-Imier',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $textChoice8 = TextChoice::insert([
+            'id' => 8,
+            'content' => 'Lausanne',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $choice5 = Choice::insert([
+            'id' => 5,
+            'test_question_id' => 2,
+            'is_correct' => false,
+            'choiceable_id' => 5,
+            'choiceable_type' => TextChoice::class,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $choice6 = Choice::insert([
+            'id' => 6,
+            'test_question_id' => 2,
+            'is_correct' => false,
+            'choiceable_id' => 6,
+            'choiceable_type' => TextChoice::class,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $choice7 = Choice::insert([
+            'id' => 7,
+            'test_question_id' => 2,
+            'is_correct' => true,
+            'choiceable_id' => 7,
+            'choiceable_type' => TextChoice::class,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $choice8 = Choice::insert([
+            'id' => 8,
+            'test_question_id' => 2,
+            'is_correct' => false,
+            'choiceable_id' => 8,
+            'choiceable_type' => TextChoice::class,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        //
+
+         $question3 = TestQuestion::insert([
+            'id' => 3,
+            'test_id' => 1,
+            'index' => 2,
+            'content' => 'When was the Breitling compagny founded ?',
+            'points_awarded' => 1000,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $textChoice9 = TextChoice::insert([
+            'id' => 9,
+            'content' => '1924',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $textChoice10 = TextChoice::insert([
+            'id' => 10,
+            'content' => '1892',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $textChoice11 = TextChoice::insert([
+            'id' => 11,
+            'content' => '1904',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $textChoice12 = TextChoice::insert([
+            'id' => 12,
+            'content' => '1884',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $choice9 = Choice::insert([
+            'id' => 9,
+            'test_question_id' => 3,
+            'is_correct' => false,
+            'choiceable_id' => 9,
+            'choiceable_type' => TextChoice::class,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $choice10 = Choice::insert([
+            'id' => 10,
+            'test_question_id' => 3,
+            'is_correct' => false,
+            'choiceable_id' => 10,
+            'choiceable_type' => TextChoice::class,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $choice11 = Choice::insert([
+            'id' => 11,
+            'test_question_id' => 3,
+            'is_correct' => false,
+            'choiceable_id' => 11,
+            'choiceable_type' => TextChoice::class,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $choice12 = Choice::insert([
+            'id' => 12,
+            'test_question_id' => 3,
+            'is_correct' => true,
+            'choiceable_id' => 12,
             'choiceable_type' => TextChoice::class,
             'created_at' => now(),
             'updated_at' => now(),

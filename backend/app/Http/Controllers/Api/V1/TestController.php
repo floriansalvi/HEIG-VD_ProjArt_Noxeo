@@ -18,11 +18,11 @@ class TestController extends Controller
     public function show(int $testId): JsonResponse
     {
         $test = Test::with([
-            'step',
+            'step.module',
             'testQuestions' => function ($query) {
                 $query->orderBy('index');
             },
-            'testQuestions.choices.choiceable'
+            'testQuestions.choices.choiceable',
         ])->findOrFail($testId);
 
         return response()->json([
